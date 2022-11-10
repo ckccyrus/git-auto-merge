@@ -6,14 +6,12 @@ const BranchTree = require(`${appRoot}/modules/branchTree`);
 const WorkspaceManager = require(`${appRoot}/modules/workspaceManager`);
 
 const CONFIG = {
-    'GIT_USERNAME': '900',
-    'GIT_PASSWORD': encodeURIComponent('Test1234#'),
+    'GIT_USERNAME': encodeURIComponent(process.env.GIT_USERNAME),
+    'GIT_PASSWORD': encodeURIComponent(process.env.GIT_PASSWORD),
     'BRANCH_RELATIONSHIP':{
         //'branch': 'parent'
         'master': null,
         'feature-1': 'master',
-        'feature-3': 'feature-1',
-        'feature-2': 'master'
     },
     'ROOT_BRANCH': 'master'
 }
@@ -27,12 +25,11 @@ async function asyncMain(){
     Messenger.openClose('/WORKSPACE INIT PRIMARY WORKSPACE');
 
     Messenger.openClose('TREE CREATION');
-    // let _rootBranch = 'feature-1',
-    //     _branchTree = new BranchTree(CONFIG.BRANCH_RELATIONSHIP, _rootBranch);
+    let _branchTree = new BranchTree(CONFIG.BRANCH_RELATIONSHIP, CONFIG.ROOT_BRANCH);
     Messenger.openClose('/TREE CREATION');
 
     Messenger.openClose('TREE PROPAGATE');
-    // await _branchTree.propagate();
+    await _branchTree.propagate();
     Messenger.openClose('/TREE PROPAGATE');
 
     Messenger.openClose('/MAIN');

@@ -26,7 +26,8 @@ class WorkspaceManager{
         let _self = this;
         _self.initGit();
         _self.initGitAuth();
-        _self.setupWorkspaces();
+        // _self.setupWorkspaces();
+        _self.removeWorkspaces();
     }
 
     static getInstance(){
@@ -69,6 +70,32 @@ class WorkspaceManager{
                 },
                 _workspace = new Workspace(_sendObj);
             _self._allWorkspaces.push(_workspace);
+        }
+
+        async function getAllWorkspaceFolderName(){
+            let _allSubPath = await fs.promises.readdir(_self._CONFIG.WORKSPACE_ROOT_DIR, { withFileTypes: true}),
+                _allSubDirectories = _allSubPath.filter($dirent => $dirent.isDirectory()),
+                _allGitSubDirectoryObjects = _allSubDirectories.filter($dirent => {
+                    let _direntName = $dirent.name,
+                        _isGitDir = fs.existsSync(`${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_direntName}/.git`);
+                    return _isGitDir;
+                }),
+                _allGitFolderNames = _allGitSubDirectoryObjects.map($dirent => $dirent.name).filter($direntName => $direntName != 'primary');
+            
+            return _allGitFolderNames;
+        }
+    }
+
+    async removeWorkspaces(){
+        let _self = this,
+            _allWorkspaceFolderNames = await getAllWorkspaceFolderName();
+        
+        for (let i = 0; i < _allWorkspaceFolderNames.length; i++) {
+            let _workspaceFolderName = _allWorkspaceFolderNames[i],
+                _workspaceDirectory = `${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_workspaceFolderName}`;
+            console.log(`DEBUG: [WorkspaceManager] removing ${_workspaceFolderName}...`);
+            await fs.promises.rm(_workspaceDirectory, { recursive: true, force: true })
+            console.log(`DEBUG: [WorkspaceManager] ${_workspaceFolderName} is removed`);
         }
 
         async function getAllWorkspaceFolderName(){
