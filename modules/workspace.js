@@ -4,6 +4,7 @@ const appRoot = require('app-root-path');
 const Messenger = require(`${appRoot}/modules/messenger`);
 
 class Workspace{
+    _uuid
     _idle                           // flag to show this workspace is idle or not
     _directory
     _folderName
@@ -15,8 +16,9 @@ class Workspace{
     constructor($sendObj) {
         console.log("DEBUG: [Workspace] constructing workspace...");
         let _self = this;
-        _self._folderName = $sendObj.folderName,
-        _self._directory = $sendObj.directory,
+        _self._uuid = $sendObj.uuid;
+        _self._folderName = $sendObj.folderName;
+        _self._directory = $sendObj.directory;
         _self._idle = true;
         if(!$sendObj.folderName || !$sendObj.directory) throw new Error('Workspace construction error, missing folderName or directory');
         _self.initGit();
@@ -72,25 +74,10 @@ class Workspace{
             await _self.pushBranch($destinationBranch);
         }catch($err){
             // Merge failed
+            // TODO: handle merge conflict here
             throw new Error($err)
         }
-
-        _self.release();
         console.log(`DEBUG: [Workspace] Finished merge <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}`);
-
-
-        // let _self = this;
-        // let _randomSec = getRandomInt(3, 10);
-        // console.log(`DEBUG: [Workspace] Merging <${$sourceBranch}> into <${$destinationBranch}> for ${_randomSec} sec by ${_self._folderName}... `);
-        // await _self.sleep(_randomSec * 1000) // sleep for 3-10 second to pretend merging
-        // console.log(`DEBUG: [Workspace] Finished merge <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}`);
-        // _self.release();
-
-        // function getRandomInt(min, max) {
-        //     min = Math.ceil(min);
-        //     max = Math.floor(max);
-        //     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
-        // }
     }
 
     async isValidRemoteBranch($branch){
@@ -119,11 +106,13 @@ class Workspace{
 
     rent(){
         let _self = this;
+        console.log(`DEBUG: [Workspace] Workspace ${_self._uuid} is rented`);
         _self._idle = false;
     }
 
     release(){
         let _self = this;
+        console.log(`DEBUG: [Workspace] Workspace ${_self._uuid} is released`);
         _self._idle = true;
     }
 
@@ -135,6 +124,11 @@ class Workspace{
     get isIdle(){
         let _self = this;
         return _self._idle == true
+    }
+
+    get uuid(){
+        let _self = this;
+        return _self._uuid;
     }
 }
 

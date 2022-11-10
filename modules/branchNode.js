@@ -86,9 +86,11 @@ class BranchNode {
             _parentBranchName = _self._isRoot ? '' : _self._parentNode.getBranchName,
             _sourceBranchName = _parentBranchName,
             _destinationBranchName = _curBranchName,
-            _workspaceManager = _self._workspaceManager;
-        // console.log(`DEBUG: [BranchNode] Scheduling merge request: <${_parentBranchName}> into <${_curBranchName}>`);
-        await _workspaceManager.mergeSchedule(_sourceBranchName, _destinationBranchName);
+            _workspaceManager = _self._workspaceManager,
+            _workspace = await _workspaceManager.getIdleWorkspace();
+            
+        await _workspace.merge(_sourceBranchName, _destinationBranchName);
+        _workspaceManager.releaseWorkspace(_workspace);
     }
 
     // getter and setter

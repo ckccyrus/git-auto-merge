@@ -13,21 +13,9 @@ class BranchTree {
         _self._event = new Event();
         _self._branchRelationship = $branchRelationship;
         _self._treeRootName = $rootBranch;
-        // _self.initTreeRootName();
         _self.initTreeRootNode();
         _self.addListenerToRootNode();
     }
-
-    // initTreeRootName(){
-    //     let _self = this,
-    //         _branchRelationship = _self._branchRelationship,
-    //         _noParentValue = null;
-    //     for (const [$branch, $parent] of Object.entries(_branchRelationship)) {
-    //         if($parent === _noParentValue){
-    //             _self._treeRootName = $branch;
-    //         }
-    //     }
-    // }
 
     initTreeRootNode(){
         let _self = this,

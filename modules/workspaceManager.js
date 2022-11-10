@@ -58,33 +58,33 @@ class WorkspaceManager{
         }
     }
 
-    async setupWorkspaces(){
-        let _self = this,
-            _allWorkspaceFolderNames = await getAllWorkspaceFolderName();
+    // async setupWorkspaces(){
+    //     let _self = this,
+    //         _allWorkspaceFolderNames = await getAllWorkspaceFolderName();
         
-        for(let i = 0; i < _allWorkspaceFolderNames.length; i++){
-            let _folderName = _allWorkspaceFolderNames[i],
-                _sendObj = {
-                    folderName: _folderName,
-                    directory: _self._CONFIG.WORKSPACE_ROOT_DIR
-                },
-                _workspace = new Workspace(_sendObj);
-            _self._allWorkspaces.push(_workspace);
-        }
+    //     for(let i = 0; i < _allWorkspaceFolderNames.length; i++){
+    //         let _folderName = _allWorkspaceFolderNames[i],
+    //             _sendObj = {
+    //                 folderName: _folderName,
+    //                 directory: _self._CONFIG.WORKSPACE_ROOT_DIR
+    //             },
+    //             _workspace = new Workspace(_sendObj);
+    //         _self._allWorkspaces.push(_workspace);
+    //     }
 
-        async function getAllWorkspaceFolderName(){
-            let _allSubPath = await fs.promises.readdir(_self._CONFIG.WORKSPACE_ROOT_DIR, { withFileTypes: true}),
-                _allSubDirectories = _allSubPath.filter($dirent => $dirent.isDirectory()),
-                _allGitSubDirectoryObjects = _allSubDirectories.filter($dirent => {
-                    let _direntName = $dirent.name,
-                        _isGitDir = fs.existsSync(`${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_direntName}/.git`);
-                    return _isGitDir;
-                }),
-                _allGitFolderNames = _allGitSubDirectoryObjects.map($dirent => $dirent.name).filter($direntName => $direntName != 'primary');
+    //     async function getAllWorkspaceFolderName(){
+    //         let _allSubPath = await fs.promises.readdir(_self._CONFIG.WORKSPACE_ROOT_DIR, { withFileTypes: true}),
+    //             _allSubDirectories = _allSubPath.filter($dirent => $dirent.isDirectory()),
+    //             _allGitSubDirectoryObjects = _allSubDirectories.filter($dirent => {
+    //                 let _direntName = $dirent.name,
+    //                     _isGitDir = fs.existsSync(`${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_direntName}/.git`);
+    //                 return _isGitDir;
+    //             }),
+    //             _allGitFolderNames = _allGitSubDirectoryObjects.map($dirent => $dirent.name).filter($direntName => $direntName != 'primary');
             
-            return _allGitFolderNames;
-        }
-    }
+    //         return _allGitFolderNames;
+    //     }
+    // }
 
     async removeWorkspaces(){
         let _self = this,
@@ -131,8 +131,8 @@ class WorkspaceManager{
 
     async resetWorkspace($directory){
         // fetch
-        // remove all local branches
         // switch to master and pull
+        // remove all local branches
         let _self = this;
         _self._git = simpleGit($directory);
         await _self._git.fetch();
@@ -193,20 +193,10 @@ class WorkspaceManager{
         }
     }
 
-    async mergeSchedule($sourceBranch, $destinationBranch){
-        // console.log(`DEBUG: [WorkspaceManager] mergeSchedule $sourceBranch: ${$sourceBranch} ; $destinationBranch: ${$destinationBranch}`);
-        let _self = this,
-            _idleWorkspace = await _self.getIdleWorkspace();
-
-        await _idleWorkspace.merge($sourceBranch, $destinationBranch);
-    }
-
     async getIdleWorkspace(){
         let _self = this,
             _found = false,
             _checked = 0;
-
-        if(_self._allWorkspaces.length == 0) return await _self.createWorkspace();
 
         for(let i = 0; i < _self._allWorkspaces.length; i++){
             let _workspace = _self._allWorkspaces[i],
@@ -217,11 +207,26 @@ class WorkspaceManager{
                 return _workspace;
             }
             if(_isLastLoop && !_found){
-                return await _self.createWorkspace();
+                let _newWorkspace = await _self.createWorkspace();
+                _newWorkspace.rent();
+                return _newWorkspace;
             }
         }
 
-        return await _self.createWorkspace();
+        let _newWorkspace = await _self.createWorkspace();
+        _newWorkspace.rent();
+        return _newWorkspace;
+    }
+
+    async releaseWorkspace($workspace){
+        let _self = this,
+            _targetUuid = $workspace.uuid;
+        for (let i = 0; i < _self._allWorkspaces.length; i++) {
+            const _workspace = _self._allWorkspaces[i];
+            if(_workspace.uuid == _targetUuid){
+                _workspace.release();
+            }
+        }
     }
 
     async createWorkspace(){
@@ -243,13 +248,12 @@ class WorkspaceManager{
 
         //create Workspace instance
         let _sendObj = {
+                uuid: _uuid,
                 folderName: _newWorkspaceFolderName,
                 directory: _workspaceRootDir
             },
             _newWorkspace = new Workspace(_sendObj);
-        //add it to allWorkspaces array
         _self._allWorkspaces.push(_newWorkspace);
-        //return instance created
         return _newWorkspace;
     }
 }
