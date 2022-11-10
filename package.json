@@ -1,0 +1,18 @@
+{
+  "name": "automerge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "app-root-path": "^3.1.0",
+    "dotenv": "^16.0.3",
+    "fs-extra": "^10.1.0",
+    "simple-git": "^3.14.1",
+    "uuid": "^9.0.0"
+  }
+}
