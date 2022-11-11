@@ -85,6 +85,8 @@ class WorkspaceManager{
     }
 
     async initPrimaryWorkspace(){
+        console.log("DEBUG: [workspaceManager] initPrimaryWorkspace: WORKSPACE_ROOT_DIR", WORKSPACE_ROOT_DIR);
+        console.log("DEBUG: [workspaceManager] initPrimaryWorkspace: appRoot", appRoot);
         let _self = this,
             _primaryWorkspaceDir = _self._CONFIG.PRIMARY_WORKSPACE_DIR,
             _targetGitPath = _self._CONFIG.TARGET_GIT_PATH,
