@@ -57,6 +57,7 @@ class WorkspaceManager{
                 new Error ('[WorkspaceManager] Either process.env.GIT_USERNAME or process.env.GIT_PASSWORD are undefined!')
             )
         }
+        console.log("DEBUG: [WorkspaceManager] initGitAuth: ", _self._gitAuth);
     }
 
     async removeWorkspaces(){
