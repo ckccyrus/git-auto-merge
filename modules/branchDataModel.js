@@ -1,3 +1,6 @@
+const appRoot = require('app-root-path');
+require('dotenv').config({ path: `${appRoot}/.env` });
+
 class BranchDataModel{
     _CONFIG = {
         'BRANCH_RELATIONSHIP':{
@@ -7,7 +10,7 @@ class BranchDataModel{
             'feature-2': 'feature-1',
             'feature-3': 'master'
         },
-        'ROOT_BRANCH': 'master'
+        'ROOT_BRANCH': `${process.env.ROOT_BRANCH || 'master'}`
     }
 
     constructor(){
