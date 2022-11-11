@@ -89,8 +89,6 @@ class WorkspaceManager{
             _workspaceRootDir = _self._CONFIG.WORKSPACE_ROOT_DIR,
             _isRootWorkspaceDirExist = fs.existsSync(_workspaceRootDir);
 
-        console.log("DEBUG: [WorkspaceManager] initPrimaryWorkspace: ", _isRootWorkspaceDirExist);
-
         if(!_isRootWorkspaceDirExist){
             await fs.promises.mkdir(_workspaceRootDir, { recursive: true });
         }
@@ -155,6 +153,7 @@ class WorkspaceManager{
     }
 
     async cloneRepo($gitPath, $directory){
+        console.log("DEBUG: [WorkspaceManager] cloneRepo: ", this._gitAuth);
         let _self = this,
             _gitAuth = _self._gitAuth,
             _repoPath = removeHttpsPrefix($gitPath),
