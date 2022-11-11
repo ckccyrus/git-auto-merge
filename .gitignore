@@ -1,3 +1,5 @@
 .env
 workspaces
 node_modules
+stdout.log
+stderr.log
