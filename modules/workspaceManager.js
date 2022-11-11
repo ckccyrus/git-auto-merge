@@ -2,7 +2,6 @@ const { v4: uuidv4 } = require('uuid');
 const fs = require('fs-extra');
 const simpleGit = require('simple-git');
 const appRoot = require('app-root-path');
-require('dotenv').config({ path: `${appRoot}/.env` });
 const Workspace = require(`${appRoot}/modules/workspace`);
 const Messenger = require(`${appRoot}/modules/messenger`);
 
@@ -57,7 +56,6 @@ class WorkspaceManager{
                 new Error ('[WorkspaceManager] Either process.env.GIT_USERNAME or process.env.GIT_PASSWORD are undefined!')
             )
         }
-        console.log("DEBUG: [WorkspaceManager] initGitAuth: ", _self._gitAuth);
     }
 
     async removeWorkspaces(){
