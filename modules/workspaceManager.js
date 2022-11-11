@@ -2,7 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 const fs = require('fs-extra');
 const simpleGit = require('simple-git');
 const appRoot = require('app-root-path');
-// require('dotenv').config({ path: `${appRoot}/.env` });
+require('dotenv').config({ path: `${appRoot}/.env` });
 const Workspace = require(`${appRoot}/modules/workspace`);
 const Messenger = require(`${appRoot}/modules/messenger`);
 
