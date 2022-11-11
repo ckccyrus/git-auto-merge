@@ -47,7 +47,7 @@ class Workspace{
     }
 
     async merge($sourceBranch, $destinationBranch){
-        // TODO: real merge process:  
+        // Merge process:  
         // 1. set idle = false for this instance
         // 2. fetch and pull and push for both $sourceBranch and $destinationBranch (keep latest version) // TODO: study what if someone push a newer version duration the merge process?
         // 3. checkout $destinationBranch
@@ -81,6 +81,7 @@ class Workspace{
             return _isMergeSuccess;
         }
         console.log(`DEBUG: [Workspace] Finished merge <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}`);
+        console.log(`DEBUG: [Workspace] Success _isMergeSuccess ${_isMergeSuccess}`);
         return _isMergeSuccess;
     }
 

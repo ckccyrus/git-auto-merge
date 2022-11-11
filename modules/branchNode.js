@@ -5,6 +5,7 @@ const Event = require(`${appRoot}/modules/event`);
 const WorkspaceManager = require(`${appRoot}/modules/workspaceManager`);
 
 class BranchNode {
+    _cms;
     _event;
     _isRoot;
     _branchName;
@@ -15,9 +16,6 @@ class BranchNode {
     _childrenNodesArr;
     _branchRelationship; // TODO: should move to better position
     _childNodeReadyCount;
-
-    // Instance
-    _cms;
 
     constructor($branchName, $parentNode, $branchRelationship){
         let _self = this;
@@ -75,13 +73,13 @@ class BranchNode {
     async propagate(){
         let _self = this;
         if(!_self._isRoot){
-            let _mergeStatus = await _self.mergeSchedule();
-            if(_mergeStatus === 'SUCCESS'){
+            let _isMergeSuccess = await _self.mergeSchedule();
+            if(_isMergeSuccess){
                 for (const $childNode of _self._childrenNodes) {
                     await $childNode.propagate();
                 }
             }else{
-                console.log(`DEBUG: [BranchNode] Since fail merge from ${_self._parentNode.getBranchName} to ${_self._branchName}, stop downward propagate.`);
+                console.log(`DEBUG: [BranchNode] Since merge fail from ${_self._parentNode.getBranchName} to ${_self._branchName}, stop downward propagate.`);
             }
         }else{
             for (const $childNode of _self._childrenNodes) {

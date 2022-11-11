@@ -58,34 +58,6 @@ class WorkspaceManager{
         }
     }
 
-    // async setupWorkspaces(){
-    //     let _self = this,
-    //         _allWorkspaceFolderNames = await getAllWorkspaceFolderName();
-        
-    //     for(let i = 0; i < _allWorkspaceFolderNames.length; i++){
-    //         let _folderName = _allWorkspaceFolderNames[i],
-    //             _sendObj = {
-    //                 folderName: _folderName,
-    //                 directory: _self._CONFIG.WORKSPACE_ROOT_DIR
-    //             },
-    //             _workspace = new Workspace(_sendObj);
-    //         _self._allWorkspaces.push(_workspace);
-    //     }
-
-    //     async function getAllWorkspaceFolderName(){
-    //         let _allSubPath = await fs.promises.readdir(_self._CONFIG.WORKSPACE_ROOT_DIR, { withFileTypes: true}),
-    //             _allSubDirectories = _allSubPath.filter($dirent => $dirent.isDirectory()),
-    //             _allGitSubDirectoryObjects = _allSubDirectories.filter($dirent => {
-    //                 let _direntName = $dirent.name,
-    //                     _isGitDir = fs.existsSync(`${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_direntName}/.git`);
-    //                 return _isGitDir;
-    //             }),
-    //             _allGitFolderNames = _allGitSubDirectoryObjects.map($dirent => $dirent.name).filter($direntName => $direntName != 'primary');
-            
-    //         return _allGitFolderNames;
-    //     }
-    // }
-
     async removeWorkspaces(){
         let _self = this,
             _allWorkspaceFolderNames = await getAllWorkspaceFolderName();
