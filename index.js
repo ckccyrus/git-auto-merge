@@ -1,6 +1,5 @@
-require('dotenv').config();
-
 const appRoot = require('app-root-path');
+require('dotenv').config({ path: `${appRoot}/.env` });
 const Messenger = require(`${appRoot}/modules/messenger`);
 const BranchTree = require(`${appRoot}/modules/branchTree`);
 const BranchDataModel = require(`${appRoot}/modules/branchDataModel`);
