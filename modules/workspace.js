@@ -55,6 +55,7 @@ class Workspace{
         // 5. set idle = true for this instance
 
         let _self = this,
+            _isMergeSuccess = false,
             _isSourceBranchValid = await _self.isValidRemoteBranch($sourceBranch),
             _isDestinationBranchValid = await _self.isValidRemoteBranch($destinationBranch);
 
@@ -69,15 +70,18 @@ class Workspace{
         await _self.fetchAndPullCurBranch();
 
         try{
-            let mergeSummary = await _self._git.raw('merge', $sourceBranch)
+            let mergeSummary = await _self._git.mergeFromTo('origin', $sourceBranch)
             console.log("DEBUG: [Workspace] mergeSummary: ", mergeSummary);
             await _self.pushBranch($destinationBranch);
+            _isMergeSuccess = true;
         }catch($err){
-            // Merge failed
-            // TODO: handle merge conflict here
-            throw new Error($err)
+            console.log(`DEBUG: [Workspace] Fail to merge <${$sourceBranch}> into <${$destinationBranch}>, Reason: ${$err}`);
+            _isMergeSuccess = false;
+            await _self.abortMerge();
+            return _isMergeSuccess;
         }
         console.log(`DEBUG: [Workspace] Finished merge <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}`);
+        return _isMergeSuccess;
     }
 
     async isValidRemoteBranch($branch){
@@ -102,6 +106,11 @@ class Workspace{
         console.log(`DEBUG: [Workspace] Pushing ${$branch} branch ...`);
         let _self = this;
         await _self._git.push('origin', $branch);
+    }
+
+    async abortMerge(){
+        let _self = this;
+        await _self._git.raw('merge', '--abort');
     }
 
     rent(){
