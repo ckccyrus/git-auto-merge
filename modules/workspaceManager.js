@@ -85,13 +85,17 @@ class WorkspaceManager{
     }
 
     async initPrimaryWorkspace(){
-        console.log("DEBUG: [workspaceManager] initPrimaryWorkspace: WORKSPACE_ROOT_DIR", this._CONFIG.WORKSPACE_ROOT_DIR);
-        console.log("DEBUG: [workspaceManager] initPrimaryWorkspace: appRoot", appRoot);
         let _self = this,
+            _workspaceRootDir = _self._CONFIG.WORKSPACE_ROOT_DIR,
+            _isRootWorkspaceDirExist = fs.existsSync(_workspaceRootDir),
             _primaryWorkspaceDir = _self._CONFIG.PRIMARY_WORKSPACE_DIR,
             _targetGitPath = _self._CONFIG.TARGET_GIT_PATH,
             _isFolderExist = fs.existsSync(_primaryWorkspaceDir),
             _isGitDirectory = fs.existsSync(`${_primaryWorkspaceDir}/.git`);
+
+        if(!_isRootWorkspaceDirExist){
+            await fs.promises.mkdir(_workspaceRootDir, { recursive: true });
+        }
         
         if(_isFolderExist && _isGitDirectory){
             // await _self.fetchAndPullRepo(_primaryWorkspaceDir);
