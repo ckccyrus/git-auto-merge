@@ -10,7 +10,7 @@ class Cms{
     constructor(){}
 
     async sendMessage($targetTgId, $message){
-        console.log(`DEBUG: [CMS] sending message to ${$targetTgId}`);
+        console.log(`DEBUG: [CMS] sending message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
         let _self = this;
         if(!_self._CONFIG.CMS_URL) throw new Error('process.env.CMS_HOST is undefined!');
         let _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MESSAGE_API_SUFFIX}`,
