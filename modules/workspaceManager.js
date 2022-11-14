@@ -19,7 +19,7 @@ class WorkspaceManager{
     _CONFIG = {
         'WORKSPACE_ROOT_DIR': `${appRoot}/workspaces`,
         'PRIMARY_WORKSPACE_DIR': `${appRoot}/workspaces/primary`,
-        'TARGET_GIT_PATH': 'https://gitlab.ttt.link/214/automerge.git'
+        'TARGET_GIT_PATH': process.env.TARGET_GIT_PATH || ''
     }
     
     constructor() {
@@ -102,6 +102,7 @@ class WorkspaceManager{
             // await _self.fetchAndPullRepo(_primaryWorkspaceDir);
             await _self.resetWorkspace(_primaryWorkspaceDir);
         }else{
+            if(!_targetGitPath) throw new Error('process.env.TARGET_GIT_PATH is undefiend!')
             fs.rmSync(_primaryWorkspaceDir, { recursive: true, force: true });
             await fs.promises.mkdir(_primaryWorkspaceDir, { recursive: true });
             await _self.cloneRepo(_targetGitPath, _primaryWorkspaceDir);

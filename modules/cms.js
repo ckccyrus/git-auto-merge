@@ -3,7 +3,7 @@ var querystring = require('querystring');
 
 class Cms{
     _CONFIG = {
-        'CMS_URL': `http://192.168.1.84:9001`,
+        'CMS_URL': process.env.CMS_HOST || '',
         'SEND_MESSAGE_API_SUFFIX': '/api/SendMessage'
     }
 
@@ -11,8 +11,9 @@ class Cms{
 
     async sendMessage($targetTgId, $message){
         console.log(`DEBUG: [CMS] sending message to ${$targetTgId}`);
-        let _self = this,
-            _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MESSAGE_API_SUFFIX}`,
+        let _self = this;
+        if(!_self._CONFIG.CMS_URL) throw new Error('process.env.CMS_HOST is undefined!');
+        let _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MESSAGE_API_SUFFIX}`,
             _data = {
                 "chat_id": $targetTgId,
                 "message": $message 
