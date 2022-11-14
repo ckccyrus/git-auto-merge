@@ -75,7 +75,7 @@ class Workspace{
 
         try{
 
-            let _result = shelljs.exec(`git merge origin/${$sourceBranch} -m "[ci-skip] Auto merge from ${$sourceBranch} to ${$destinationBranch}"`),
+            let _result = shelljs.exec(`git merge origin/${$sourceBranch} -m "[ci-skip] Auto merge branch ${$sourceBranch} into ${$destinationBranch}"`),
                 _status = _result.code,
                 _isSuccess = _status == 0;
 
