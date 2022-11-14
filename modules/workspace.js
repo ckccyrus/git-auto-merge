@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const simpleGit = require('simple-git');
 const appRoot = require('app-root-path');
 const Messenger = require(`${appRoot}/modules/messenger`);
+const shelljs = require('shelljs');
 
 class Workspace{
     _uuid
@@ -64,20 +65,28 @@ class Workspace{
 
         console.log(`DEBUG: [Workspace] Merging <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}... `);
 
-        await _self.checkoutBranch($sourceBranch);
-        await _self.fetchAndPullCurBranch();
-        await _self.checkoutBranch($destinationBranch);
-        await _self.fetchAndPullCurBranch();
+        shelljs.cd(_self._directory+'/'+_self._folderName);
+        shelljs.exec(`git checkout ${$sourceBranch}`);
+        shelljs.exec(`git fetch`);
+        shelljs.exec(`git pull`);
+        shelljs.exec(`git checkout ${$destinationBranch}`);
+        shelljs.exec(`git fetch`);
+        shelljs.exec(`git pull`);
 
         try{
-            let mergeSummary = await _self._git.mergeFromTo('origin', $sourceBranch)
-            console.log("DEBUG: [Workspace] mergeSummary: ", mergeSummary);
-            await _self.pushBranch($destinationBranch);
+
+            let _result = shelljs.exec(`git merge origin/${$sourceBranch} -m "[ci-skip] Auto merge from ${$sourceBranch} to ${$destinationBranch}"`),
+                _status = _result.code,
+                _isSuccess = _status == 0;
+
+            if(!_isSuccess) throw new Error(_result.stdout);
+            console.log("DEBUG: [Workspace] merge result: ", _result);
             _isMergeSuccess = true;
+            shelljs.exec(`git push origin ${$destinationBranch}`);
         }catch($err){
             console.log(`DEBUG: [Workspace] Fail to merge <${$sourceBranch}> into <${$destinationBranch}>, Reason: ${$err}`);
             _isMergeSuccess = false;
-            await _self.abortMerge();
+            shelljs.exec('git merge --abort');
             return _isMergeSuccess;
         }
         console.log(`DEBUG: [Workspace] Finished merge <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}`);
