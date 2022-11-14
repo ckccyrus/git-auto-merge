@@ -5,10 +5,7 @@ class BranchDataModel{
     _CONFIG = {
         'BRANCH_RELATIONSHIP':{
             //'branch': 'parent'
-            'master': null,
-            'feature-1': 'master',
-            'feature-2': 'feature-1',
-            'feature-3': 'master'
+            'master': null
         },
         'ROOT_BRANCH': `${process.env.ROOT_BRANCH || 'master'}`
     }
