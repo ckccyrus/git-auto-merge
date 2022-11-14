@@ -154,7 +154,7 @@ class WorkspaceManager{
     }
 
     async cloneRepo($gitPath, $directory){
-        console.log("DEBUG: [WorkspaceManager] cloneRepo: ", this._gitAuth);
+        console.log("DEBUG: [WorkspaceManager] cloneRepo: ");
         let _self = this,
             _gitAuth = _self._gitAuth,
             _repoPath = removeHttpsPrefix($gitPath),
