@@ -21,7 +21,7 @@ class BranchTree {
         let _self = this,
             _treeRootName = _self._treeRootName,
             _branchRelationship = _self._branchRelationship,
-            _parentNode = null
+            _parentNode = null;
         if(!_treeRootName) throw('[BranchTree] _treeRootName is undefined!')
         _self._treeRootNode = new BranchNode(_treeRootName, _parentNode, _branchRelationship);
     }

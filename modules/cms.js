@@ -1,13 +1,20 @@
+const appRoot = require('app-root-path');
 const axios = require('axios');
 var querystring = require('querystring');
+const TELEGRAM_TABLE = require(`${appRoot}/data/telegramTable.json`)
 
 class Cms{
+    _telegramTable;
+
     _CONFIG = {
         'CMS_URL': process.env.CMS_HOST || '',
         'SEND_MESSAGE_API_SUFFIX': '/api/SendMessage'
     }
 
-    constructor(){}
+    constructor(){
+        let _self = this;
+        _self._telegramTable = TELEGRAM_TABLE;
+    }
 
     async sendMessage($targetTgId, $message){
         console.log(`DEBUG: [CMS] sending message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);

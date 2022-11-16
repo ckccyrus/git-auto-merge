@@ -8,8 +8,7 @@ const WorkspaceManager = require(`${appRoot}/modules/workspaceManager`);
 async function asyncMain(){
     Messenger.openClose('MAIN');
 
-    let _branchDataModel = new BranchDataModel();
-        _branchDataModel.init();
+    let _branchDataModel = new BranchDataModel(),
         _branchRelationship = _branchDataModel.getBranchRelationship(),
         _rootBranch = _branchDataModel.getRootBranch();
 

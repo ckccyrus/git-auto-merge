@@ -8,6 +8,8 @@ class BranchNode {
     _cms;
     _event;
     _isRoot;
+    _inCharge;
+    _branchData;
     _branchName;
     _parentNode;
     _mergeStatus;       // PENDING || SUCCESS || FAIL
@@ -32,7 +34,9 @@ class BranchNode {
         _self._isRoot = ($parentNode == null) ? true : false;
         _self._cms = new Cms();
         _self._messageBuilder = new MessageBuilder();
-        console.log(`DEBUG: BrachNode [${_self._branchName}] is created, its children are: ${_self._childrenNodesArr}`)
+        _self._branchData = _self._branchRelationship[_self._branchName];
+        _self._inCharge = _self._branchData['inCharge'];
+        console.log(`DEBUG: BrachNode [${_self._branchName}] is created, its children are: [${_self._childrenNodesArr}], it is in charged by ${_self._inCharge}`)
     }
 
     // methods 
@@ -55,8 +59,9 @@ class BranchNode {
         let _self = this,
             _branchRelationship = _self._branchRelationship,
             _childrenNodesArr = []
-        for (const [$branch, $parent] of Object.entries(_branchRelationship)) {
-            if($parent == _self._branchName){
+        for (const [$branch, $branchData] of Object.entries(_branchRelationship)) {
+            let _parent = $branchData.parent;
+            if(_parent == _self._branchName){
                 _childrenNodesArr.push($branch);
             }
         }

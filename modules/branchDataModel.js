@@ -1,7 +1,10 @@
 const appRoot = require('app-root-path');
 require('dotenv').config({ path: `${appRoot}/.env` });
+const BRANCH_RELATIONSHIP = require(`${appRoot}/data/branchRelationship.json`);
 
 class BranchDataModel{
+    _branchRelationship;
+
     _CONFIG = {
         'BRANCH_RELATIONSHIP':{
             //'branch': 'parent'
@@ -14,22 +17,19 @@ class BranchDataModel{
     }
 
     constructor(){
-
+        let _self = this;
+        _self._branchRelationship = BRANCH_RELATIONSHIP;
     }
 
     getBranchRelationship(){
         let _self = this;
-        return _self._CONFIG.BRANCH_RELATIONSHIP;
+        // return _self._CONFIG.BRANCH_RELATIONSHIP;
+        return _self._branchRelationship;
     }
 
     getRootBranch(){
         let _self = this;
         return _self._CONFIG.ROOT_BRANCH;
-    }
-
-    init(){
-        let _self = this;
-        // call api to retrieve data
     }
 }
 
