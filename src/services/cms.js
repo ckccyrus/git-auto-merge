@@ -7,7 +7,7 @@ const TELEGRAM_TABLE = {
     "166": "999999999"
 }
 
-class Cms{
+class CmsService{
     _telegramTable;
 
     _CONFIG = {
@@ -33,6 +33,12 @@ class Cms{
             _result = await axios.post(_url, querystring.stringify(_data), {_headers});
         console.log(`[CMS] Sent message to ${$targetTgId} with message ${$message}`);
     }
+
+    async getTelegramTable(){}
+
+    async getBranchTable(){}
+
+    async updateBranchStatus(){}
 }
 
-module.exports = Cms;
+module.exports = CmsService;

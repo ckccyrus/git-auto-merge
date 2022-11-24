@@ -65,6 +65,7 @@ class Workspace{
 
         console.log(`[Workspace] Merging <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}... `);
 
+        console.log(`==================================================`);
         shelljs.cd(_self._directory+'/'+_self._folderName);
         shelljs.exec(`git checkout ${$sourceBranch}`);
         shelljs.exec(`git fetch`);
@@ -72,6 +73,7 @@ class Workspace{
         shelljs.exec(`git checkout ${$destinationBranch}`);
         shelljs.exec(`git fetch`);
         shelljs.exec(`git pull`);
+        console.log(`==================================================`);
 
         try{
 
@@ -80,7 +82,10 @@ class Workspace{
                 _isSuccess = _status == 0;
 
             if(!_isSuccess) throw new Error(_result.stdout);
-            console.log("[Workspace] merge result: ", _result);
+            // console.log("[Workspace] merge result: ");
+            // console.log(`==================================================`);
+            // console.log(_result);
+            // console.log(`==================================================`);
             _isMergeSuccess = true;
             shelljs.exec(`git push origin ${$destinationBranch}`);
         }catch($err){

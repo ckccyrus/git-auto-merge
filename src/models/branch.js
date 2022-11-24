@@ -20,7 +20,7 @@ const BRANCH_RELATIONSHIP = {
     }
 };
 
-class BranchDataModel{
+class BranchModel{
     _branchRelationship;
 
     _CONFIG = {
@@ -51,4 +51,4 @@ class BranchDataModel{
     }
 }
 
-module.exports = BranchDataModel;
+module.exports = BranchModel;

@@ -35,7 +35,7 @@ class BranchNode {
         _self._cmsService = new CmsService();
         _self._branchData = _self._branchRelationship[_self._branchName];
         _self._inCharge = _self._branchData['inCharge'];
-        console.log(`BrachNode [${_self._branchName}] is created, its children are: [${_self._childrenNodesArr}], it is in charged by ${_self._inCharge}`)
+        console.log(`[BranchNode] BrachNode [${_self._branchName}] is created, its children are: [${_self._childrenNodesArr}], it is in charged by ${_self._inCharge}`)
     }
 
     // methods 
@@ -68,10 +68,8 @@ class BranchNode {
     }
 
     onBranchNodeEvent($evt){
-        let _self = this,
-            _eventType = $evt.eventType;
-        switch(_eventType){
-        }
+        let _self = this;
+        _self._event.dispatch('branchNodeEvent', $evt);
     }
 
     async propagate(){
@@ -117,13 +115,25 @@ class BranchNode {
         _workspaceManager.releaseWorkspace(_workspace);
 
         if(_isMergeSuccess) {
+            console.log("DEBUG: [BranchNode] merge success!");
+
             _self.updateMergeStatus('SUCCESS');
+            _self._event.dispatch('branchNodeEvent', {
+                eventType: 'mergeSuccess',
+                from: _parentBranchName,
+                to: _destinationBranchName
+            });
+            console.log("DEBUG: [BranchNode] dispatched success event!");
         }else{
             _self.updateMergeStatus('FAIL');
             // Send TG to who is incharge for this branch
-            let _message = MessageBuilderUtil.getMergeConflictMsg(_sourceBranchName, _destinationBranchName),
-                _tgIdTo214 = '1433671879';
-            await _self._cmsService.sendMessage(_tgIdTo214, _message);
+            // let _message = MessageBuilderUtil.getMergeConflictMsg(_sourceBranchName, _destinationBranchName),
+            //     _tgIdTo214 = '1433671879';
+            // await _self._cmsService.sendMessage(_tgIdTo214, _message);
+            // TODO: dispatch merge failed to upstream instead of sending message here
+            _self._event.dispatch('branchNodeEvent', {
+                eventType: 'mergeFail'
+            })
         }
 
         return _isMergeSuccess;
