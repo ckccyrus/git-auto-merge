@@ -49,18 +49,19 @@ class AutoMergeController{
     }
 
     mergeSuccessHandler($evt){
-        // Implement merge success handler
+        // TODO: Implement merge success handler
         console.log("DEBUG: [AutoMerge_C] mergeSuccessHandler", $evt);
     }
     
     mergeFailHandler($evt){
-        // Implement merge failed handler
+        // TODO: Implement merge failed handler
         console.log("DEBUG: [AutoMerge_C] mergeFailHandler", $evt);
     }
 
     async startMerge(){
         let _self = this;
         Messenger.openClose('TREE PROPAGATE');
+        // TODO: update cms branch table to all pending, last trigger time
         await _self._branchTree.propagate();
         Messenger.openClose('/TREE PROPAGATE');
     }

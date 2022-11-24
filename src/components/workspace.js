@@ -50,13 +50,16 @@ class Workspace{
     async merge($sourceBranch, $destinationBranch){
         // Merge process:  
         // 1. set idle = false for this instance
-        // 2. fetch and pull and push for both $sourceBranch and $destinationBranch (keep latest version) // TODO: study what if someone push a newer version duration the merge process?
+        // 2. fetch and pull and push for both $sourceBranch and $destinationBranch (keep latest version)
         // 3. checkout $destinationBranch
         // 4. merge $sourceBranch into current branch
         // 5. set idle = true for this instance
 
         let _self = this,
-            _isMergeSuccess = false,
+            _returnObj = {
+                success: false,
+                result: undefined
+            },
             _isSourceBranchValid = await _self.isValidRemoteBranch($sourceBranch),
             _isDestinationBranchValid = await _self.isValidRemoteBranch($destinationBranch);
 
@@ -86,17 +89,19 @@ class Workspace{
             // console.log(`==================================================`);
             // console.log(_result);
             // console.log(`==================================================`);
-            _isMergeSuccess = true;
+            _returnObj.success = true;
+            _returnObj.result = _result;
             shelljs.exec(`git push origin ${$destinationBranch}`);
         }catch($err){
             console.log(`[Workspace] Fail to merge <${$sourceBranch}> into <${$destinationBranch}>, Reason: ${$err}`);
-            _isMergeSuccess = false;
+            _returnObj.success = false;
+            _returnObj.result = $err;
             shelljs.exec('git merge --abort');
-            return _isMergeSuccess;
+            return _returnObj;
         }
         console.log(`[Workspace] Finished merge <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}`);
-        console.log(`[Workspace] Success _isMergeSuccess ${_isMergeSuccess}`);
-        return _isMergeSuccess;
+        console.log(`[Workspace] Success _isMergeSuccess ${_returnObj}`);
+        return _returnObj;
     }
 
     async isValidRemoteBranch($branch){

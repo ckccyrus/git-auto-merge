@@ -102,6 +102,8 @@ class BranchNode {
 
     async mergeSchedule(){ // need parent and child branch name to merge
         let _self = this,
+            _mergeResult,
+            _mergeResultObj,
             _isMergeSuccess = false,
             _curBranchName = _self._branchName,
             _parentBranchName = _self._isRoot ? '' : _self._parentNode.getBranchName,
@@ -110,33 +112,41 @@ class BranchNode {
             _workspaceManager = _self._workspaceManager,
             _workspace = await _workspaceManager.getIdleWorkspace();
 
-        _isMergeSuccess = await _workspace.merge(_sourceBranchName, _destinationBranchName);
+        _mergeResultObj = await _workspace.merge(_sourceBranchName, _destinationBranchName);
+        _isMergeSuccess = _mergeResultObj.success;
+        _mergeResult = _mergeResultObj.result;
 
         _workspaceManager.releaseWorkspace(_workspace);
 
         if(_isMergeSuccess) {
-            console.log("DEBUG: [BranchNode] merge success!");
-
             _self.updateMergeStatus('SUCCESS');
-            _self._event.dispatch('branchNodeEvent', {
-                eventType: 'mergeSuccess',
-                from: _parentBranchName,
-                to: _destinationBranchName
-            });
-            console.log("DEBUG: [BranchNode] dispatched success event!");
+            _self.dispatchMergeSuccessEvent(_parentBranchName, _destinationBranchName, _mergeResult);
         }else{
             _self.updateMergeStatus('FAIL');
-            // Send TG to who is incharge for this branch
-            // let _message = MessageBuilderUtil.getMergeConflictMsg(_sourceBranchName, _destinationBranchName),
-            //     _tgIdTo214 = '1433671879';
-            // await _self._cmsService.sendMessage(_tgIdTo214, _message);
-            // TODO: dispatch merge failed to upstream instead of sending message here
-            _self._event.dispatch('branchNodeEvent', {
-                eventType: 'mergeFail'
-            })
+            _self.dispatchMergeFailEvent(_parentBranchName, _destinationBranchName, _mergeResult);
         }
 
         return _isMergeSuccess;
+    }
+
+    dispatchMergeFailEvent($parentBranch, $destinationBranch, $result){
+        let _self = this;
+        _self._event.dispatch('branchNodeEvent', {
+            eventType: 'mergeFail',
+            from: $parentBranch,
+            to: $destinationBranch,
+            result: $result
+        })
+    }
+
+    dispatchMergeSuccessEvent($parentBranch, $destinationBranch, $result){
+        let _self = this;
+        _self._event.dispatch('branchNodeEvent', {
+            eventType: 'mergeSuccess',
+            from: $parentBranch,
+            to: $destinationBranch,
+            result: $result
+        });
     }
 
     updateMergeStatus($newMergeStatus){
