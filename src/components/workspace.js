@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 const simpleGit = require('simple-git');
 const appRoot = require('app-root-path');
-const Messenger = require(`${appRoot}/modules/messenger`);
+const Messenger = require(`${appRoot}/src/utils/messenger`);
 const shelljs = require('shelljs');
 
 class Workspace{
@@ -15,7 +15,7 @@ class Workspace{
     }
 
     constructor($sendObj) {
-        console.log("DEBUG: [Workspace] constructing workspace...");
+        console.log("[Workspace] constructing workspace...");
         let _self = this;
         _self._uuid = $sendObj.uuid;
         _self._folderName = $sendObj.folderName;
@@ -63,7 +63,7 @@ class Workspace{
         if(!_isSourceBranchValid) throw new Error(`Remote doesn\'t contains ${$sourceBranch}`);
         if(!_isDestinationBranchValid) throw new Error(`Remote doesn\'t contains ${$destinationBranch}`);
 
-        console.log(`DEBUG: [Workspace] Merging <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}... `);
+        console.log(`[Workspace] Merging <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}... `);
 
         shelljs.cd(_self._directory+'/'+_self._folderName);
         shelljs.exec(`git checkout ${$sourceBranch}`);
@@ -80,17 +80,17 @@ class Workspace{
                 _isSuccess = _status == 0;
 
             if(!_isSuccess) throw new Error(_result.stdout);
-            console.log("DEBUG: [Workspace] merge result: ", _result);
+            console.log("[Workspace] merge result: ", _result);
             _isMergeSuccess = true;
             shelljs.exec(`git push origin ${$destinationBranch}`);
         }catch($err){
-            console.log(`DEBUG: [Workspace] Fail to merge <${$sourceBranch}> into <${$destinationBranch}>, Reason: ${$err}`);
+            console.log(`[Workspace] Fail to merge <${$sourceBranch}> into <${$destinationBranch}>, Reason: ${$err}`);
             _isMergeSuccess = false;
             shelljs.exec('git merge --abort');
             return _isMergeSuccess;
         }
-        console.log(`DEBUG: [Workspace] Finished merge <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}`);
-        console.log(`DEBUG: [Workspace] Success _isMergeSuccess ${_isMergeSuccess}`);
+        console.log(`[Workspace] Finished merge <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}`);
+        console.log(`[Workspace] Success _isMergeSuccess ${_isMergeSuccess}`);
         return _isMergeSuccess;
     }
 
@@ -102,18 +102,18 @@ class Workspace{
     async checkoutBranch($branch){
         let _self = this; 
         await _self._git.checkout($branch);
-        console.log(`DEBUG: [Workspace] Finished checkout to ${$branch}`);
+        console.log(`[Workspace] Finished checkout to ${$branch}`);
     }
 
     async fetchAndPullCurBranch(){
-        console.log("DEBUG: [Workspace] Start fetch and pull ...");
+        console.log("[Workspace] Start fetch and pull ...");
         let _self = this;
         await _self._git.fetch();
         await _self._git.pull();
     }
 
     async pushBranch($branch){
-        console.log(`DEBUG: [Workspace] Pushing ${$branch} branch ...`);
+        console.log(`[Workspace] Pushing ${$branch} branch ...`);
         let _self = this;
         await _self._git.push('origin', $branch);
     }
@@ -125,13 +125,13 @@ class Workspace{
 
     rent(){
         let _self = this;
-        console.log(`DEBUG: [Workspace] Workspace ${_self._uuid} is rented`);
+        console.log(`[Workspace] Workspace ${_self._uuid} is rented`);
         _self._idle = false;
     }
 
     release(){
         let _self = this;
-        console.log(`DEBUG: [Workspace] Workspace ${_self._uuid} is released`);
+        console.log(`[Workspace] Workspace ${_self._uuid} is released`);
         _self._idle = true;
     }
 

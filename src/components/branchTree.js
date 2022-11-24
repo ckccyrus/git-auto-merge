@@ -1,6 +1,6 @@
 const appRoot = require('app-root-path');
-const Event = require(`${appRoot}/modules/event`);
-const BranchNode = require(`${appRoot}/modules/branchNode`);
+const Event = require(`${appRoot}/src/modules/event`);
+const BranchNode = require(`${appRoot}/src/components/branchNode`);
 
 class BranchTree {
     _event;

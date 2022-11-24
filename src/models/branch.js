@@ -1,6 +1,24 @@
 const appRoot = require('app-root-path');
 require('dotenv').config({ path: `${appRoot}/.env` });
-const BRANCH_RELATIONSHIP = require(`${appRoot}/data/branchRelationship.json`);
+// const BRANCH_RELATIONSHIP = require(`${appRoot}/data/branchRelationship.json`);
+const BRANCH_RELATIONSHIP = {
+    "master": {
+        "parent": null,
+        "inCharge": ["frontend"]
+    },
+    "feature-1": {
+        "parent": "master",
+        "inCharge": ["214"]
+    },
+    "feature-2": {
+        "parent": "feature-1",
+        "inCharge": ["214", "166"]
+    },
+    "feature-3": {
+        "parent": "master",
+        "inCharge": ["166"] 
+    }
+};
 
 class BranchDataModel{
     _branchRelationship;

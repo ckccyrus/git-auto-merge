@@ -1,23 +1,29 @@
 const appRoot = require('app-root-path');
 require('dotenv').config({ path: `${appRoot}/.env` });
-const Messenger = require(`${appRoot}/modules/messenger`);
-const BranchTree = require(`${appRoot}/modules/branchTree`);
-const BranchDataModel = require(`${appRoot}/modules/branchDataModel`);
-const WorkspaceManager = require(`${appRoot}/modules/workspaceManager`);
+const Messenger = require(`${appRoot}/src/utils/messenger`);
+const BranchTree = require(`${appRoot}/src/components/branchTree`);
+const BranchModel = require(`${appRoot}/src/models/branch`);
+const WorkspaceManager = require(`${appRoot}/src/managers/workspaceManager`);
+
+function getBranchTree(){
+    let _branchModel = new BranchModel(),
+        _branchRelationship = _branchModel.getBranchRelationship(),
+        _rootBranch = _branchModel.getRootBranch(),
+        _branchTree = new BranchTree(_branchRelationship, _rootBranch);
+    return _branchTree;
+}
 
 async function asyncMain(){
-    Messenger.openClose('MAIN');
+    let _branchTree;
 
-    let _branchDataModel = new BranchDataModel(),
-        _branchRelationship = _branchDataModel.getBranchRelationship(),
-        _rootBranch = _branchDataModel.getRootBranch();
+    Messenger.openClose('MAIN');
 
     Messenger.openClose('WORKSPACE INIT PRIMARY WORKSPACE');
     await WorkspaceManager.getInstance().initPrimaryWorkspace();
     Messenger.openClose('/WORKSPACE INIT PRIMARY WORKSPACE');
 
     Messenger.openClose('TREE CREATION');
-    let _branchTree = new BranchTree(_branchRelationship, _rootBranch);
+    _branchTree = getBranchTree();
     Messenger.openClose('/TREE CREATION');
 
     Messenger.openClose('TREE PROPAGATE');

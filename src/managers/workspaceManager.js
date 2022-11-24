@@ -2,8 +2,8 @@ const { v4: uuidv4 } = require('uuid');
 const fs = require('fs-extra');
 const simpleGit = require('simple-git');
 const appRoot = require('app-root-path');
-const Workspace = require(`${appRoot}/modules/workspace`);
-const Messenger = require(`${appRoot}/modules/messenger`);
+const Workspace = require(`${appRoot}/src/components/workspace`);
+const Messenger = require(`${appRoot}/src/utils/messenger`);
 
 // Singleton
 class WorkspaceManager{
@@ -65,9 +65,9 @@ class WorkspaceManager{
         for (let i = 0; i < _allWorkspaceFolderNames.length; i++) {
             let _workspaceFolderName = _allWorkspaceFolderNames[i],
                 _workspaceDirectory = `${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_workspaceFolderName}`;
-            console.log(`DEBUG: [WorkspaceManager] removing ${_workspaceFolderName}...`);
+            console.log(`[WorkspaceManager] removing ${_workspaceFolderName}...`);
             await fs.promises.rm(_workspaceDirectory, { recursive: true, force: true })
-            console.log(`DEBUG: [WorkspaceManager] ${_workspaceFolderName} is removed`);
+            console.log(`[WorkspaceManager] ${_workspaceFolderName} is removed`);
         }
 
         async function getAllWorkspaceFolderName(){
@@ -129,9 +129,9 @@ class WorkspaceManager{
         async function removeAllLocalBranches($allLocalBranchArr){
             for (let i = 0; i < _allLocalBranchesExcludeMasterArr.length; i++) {
                 const _branch = _allLocalBranchesExcludeMasterArr[i];
-                console.log(`DEBUG: [WorkspaceManager] Deleting local branch ${_branch}...`);
+                console.log(`[WorkspaceManager] Deleting local branch ${_branch}...`);
                 await _self._git.raw('branch', '-D', _branch);
-                console.log(`DEBUG: [WorkspaceManager] Branch ${_branch} is deleted`);
+                console.log(`[WorkspaceManager] Branch ${_branch} is deleted`);
             }
         }
     }
@@ -154,7 +154,7 @@ class WorkspaceManager{
     }
 
     async cloneRepo($gitPath, $directory){
-        console.log("DEBUG: [WorkspaceManager] cloneRepo: ");
+        console.log("[WorkspaceManager] cloneRepo: ");
         let _self = this,
             _gitAuth = _self._gitAuth,
             _repoPath = removeHttpsPrefix($gitPath),
@@ -163,7 +163,7 @@ class WorkspaceManager{
             _encodedGitPath = `https://${_gitUsername}:${_gitPassword}@${_repoPath}`;
 
         try{
-            console.log("DEBUG: [WorkspaceManager] start cloneRepo...");
+            console.log("[WorkspaceManager] start cloneRepo...");
             await _self._git.clone(_encodedGitPath, $directory);
         }catch($err){ 
             throw new Error($err);

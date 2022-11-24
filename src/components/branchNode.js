@@ -1,11 +1,11 @@
 const appRoot = require('app-root-path');
-const Cms = require(`${appRoot}/modules/cms`);
-const MessageBuilder = require(`${appRoot}/modules/messageBuilder`);
-const Event = require(`${appRoot}/modules/event`);
-const WorkspaceManager = require(`${appRoot}/modules/workspaceManager`);
+const CmsService = require(`${appRoot}/src/services/cms`);
+const MessageBuilderUtil = require(`${appRoot}/src/utils/messageBuilder`);
+const Event = require(`${appRoot}/src/modules/event`);
+const WorkspaceManager = require(`${appRoot}/src/managers/workspaceManager`);
 
 class BranchNode {
-    _cms;
+    _cmsService;
     _event;
     _isRoot;
     _inCharge;
@@ -32,11 +32,10 @@ class BranchNode {
         _self.createAllChildrenNodes();
         _self.listenAllChildrenNodes();
         _self._isRoot = ($parentNode == null) ? true : false;
-        _self._cms = new Cms();
-        _self._messageBuilder = new MessageBuilder();
+        _self._cmsService = new CmsService();
         _self._branchData = _self._branchRelationship[_self._branchName];
         _self._inCharge = _self._branchData['inCharge'];
-        console.log(`DEBUG: BrachNode [${_self._branchName}] is created, its children are: [${_self._childrenNodesArr}], it is in charged by ${_self._inCharge}`)
+        console.log(`BrachNode [${_self._branchName}] is created, its children are: [${_self._childrenNodesArr}], it is in charged by ${_self._inCharge}`)
     }
 
     // methods 
@@ -84,7 +83,7 @@ class BranchNode {
                     await $childNode.propagate();
                 }
             }else{
-                console.log(`DEBUG: [BranchNode] Since merge fail from ${_self._parentNode.getBranchName} to ${_self._branchName}, stop downward propagate.`);
+                console.log(`[BranchNode] Since merge fail from ${_self._parentNode.getBranchName} to ${_self._branchName}, stop downward propagate.`);
             }
         }else{
             for (const $childNode of _self._childrenNodes) {
@@ -122,9 +121,9 @@ class BranchNode {
         }else{
             _self.updateMergeStatus('FAIL');
             // Send TG to who is incharge for this branch
-            let _message = _self._messageBuilder.getMergeConflictMsg(_sourceBranchName, _destinationBranchName),
+            let _message = MessageBuilderUtil.getMergeConflictMsg(_sourceBranchName, _destinationBranchName),
                 _tgIdTo214 = '1433671879';
-            await _self._cms.sendMessage(_tgIdTo214, _message);
+            await _self._cmsService.sendMessage(_tgIdTo214, _message);
         }
 
         return _isMergeSuccess;
