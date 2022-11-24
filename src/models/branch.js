@@ -21,10 +21,10 @@ const BRANCH_RELATIONSHIP = {
 };
 
 class BranchModel{
-    _branchRelationship;
+    _branchTable;
 
     _CONFIG = {
-        'BRANCH_RELATIONSHIP':{
+        'BRANCH_TABLE':{
             //'branch': 'parent'
             'master': null,
             'feature-1': 'master',
@@ -36,16 +36,21 @@ class BranchModel{
 
     constructor(){
         let _self = this;
-        _self._branchRelationship = BRANCH_RELATIONSHIP;
+        // _self._branchTable = _CONFIG.BRANCH_TABLE;
     }
 
-    getBranchRelationship(){
+    setBranchTable($branchTable){
         let _self = this;
-        // return _self._CONFIG.BRANCH_RELATIONSHIP;
-        return _self._branchRelationship;
+        _self._branchTable = $branchTable;
+    }
+
+    getBranchTable(){
+        let _self = this;
+        return _self._branchTable;
     }
 
     getRootBranch(){
+        // TODO: should set root branch by environment variable
         let _self = this;
         return _self._CONFIG.ROOT_BRANCH;
     }

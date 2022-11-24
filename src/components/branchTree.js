@@ -6,12 +6,12 @@ class BranchTree {
     _event;
     _treeRootName;
     _treeRootNode;
-    _branchRelationship;
+    _branchTable;
 
-    constructor($branchRelationship, $rootBranch){
+    constructor($branchTable, $rootBranch){
         let _self = this;
         _self._event = new Event();
-        _self._branchRelationship = $branchRelationship;
+        _self._branchTable = $branchTable;
         _self._treeRootName = $rootBranch;
         _self.initTreeRootNode();
         _self.addListenerToRootNode();
@@ -20,10 +20,10 @@ class BranchTree {
     initTreeRootNode(){
         let _self = this,
             _treeRootName = _self._treeRootName,
-            _branchRelationship = _self._branchRelationship,
+            _branchTable = _self._branchTable,
             _parentNode = null;
         if(!_treeRootName) throw('[BranchTree] _treeRootName is undefined!')
-        _self._treeRootNode = new BranchNode(_treeRootName, _parentNode, _branchRelationship);
+        _self._treeRootNode = new BranchNode(_treeRootName, _parentNode, _branchTable);
     }
 
     addListenerToRootNode(){

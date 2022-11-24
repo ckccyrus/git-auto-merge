@@ -15,36 +15,53 @@ class BranchNode {
     _mergeStatus;       // PENDING || SUCCESS || FAIL
     _workspaceManager;
     _childrenNodes;
-    _childrenNodesArr;
-    _branchRelationship; // TODO: should move to better position
+    _childrenDataArr;
+    _branchTable; // TODO: should move to better position
     _childNodeReadyCount;
 
-    constructor($branchName, $parentNode, $branchRelationship){
+    constructor($branchName, $parentNode, $branchTable){
         let _self = this;
         _self._event = new Event();
         _self._workspaceManager = WorkspaceManager.getInstance();
         _self._branchName = $branchName;
         _self._parentNode = $parentNode;
-        _self._branchRelationship = $branchRelationship;
+        _self._branchTable = $branchTable;
         _self._childrenNodes = [];
-        _self._childrenNodesArr = _self.getAllChildrenNodesArr();
+        _self._childrenDataArr = _self.getAllChildrenDataArr();
         _self._mergeStatus = 'PENDING';
         _self.createAllChildrenNodes();
         _self.listenAllChildrenNodes();
         _self._isRoot = ($parentNode == null) ? true : false;
         _self._cmsService = new CmsService();
-        _self._branchData = _self._branchRelationship[_self._branchName];
-        _self._inCharge = _self._branchData['inCharge'];
-        console.log(`[BranchNode] BrachNode [${_self._branchName}] is created, its children are: [${_self._childrenNodesArr}], it is in charged by ${_self._inCharge}`)
+        _self._branchData = _self.getBranchDataByName(_self._branchName);
+        _self._inCharge = JSON.parse(_self._branchData['mInCharge']);
+        _self.printBranchNodeCreatedMessage();
+
+    }
+
+    printBranchNodeCreatedMessage(){
+        let _self = this,
+            _childrenNameArr = _self._childrenDataArr.map($childData => $childData['mBranchName']);
+        console.log(`[BranchNode] BrachNode [${_self._branchName}] is created, its children are: [${_childrenNameArr}], it is in charged by ${_self._inCharge}`)
+    }
+
+    getBranchDataByName($brancName){
+        let _self = this;
+        for (let $i = 0; $i < _self._branchTable.length; $i++) {
+            const _branch = _self._branchTable[$i];
+            if(_branch['mBranchName'] === $brancName) return _branch;
+        }
+        return null;
     }
 
     // methods 
     createAllChildrenNodes(){
         let _self = this,
             _parentNode = this;
-        _self._childrenNodesArr.forEach($childName => {
-            _self._childrenNodes.push(new BranchNode($childName, _parentNode, _self._branchRelationship));
-        });
+        _self._childrenDataArr.forEach($childData => {
+            let _childName = $childData['mBranchName'];
+            _self._childrenNodes.push(new BranchNode(_childName, _parentNode, _self._branchTable));
+        })
     }
 
     listenAllChildrenNodes(){
@@ -54,17 +71,14 @@ class BranchNode {
         })
     }
 
-    getAllChildrenNodesArr(){
+    getAllChildrenDataArr(){
         let _self = this,
-            _branchRelationship = _self._branchRelationship,
-            _childrenNodesArr = []
-        for (const [$branch, $branchData] of Object.entries(_branchRelationship)) {
-            let _parent = $branchData.parent;
-            if(_parent == _self._branchName){
-                _childrenNodesArr.push($branch);
-            }
+            _childrenDataArr = [];
+        for (let $i = 0; $i < _self._branchTable.length; $i++) {
+            const _branch = _self._branchTable[$i];
+            if(_branch['mParentBranch'] === _self._branchName) _childrenDataArr.push(_branch);
         }
-        return _childrenNodesArr;
+        return _childrenDataArr;
     }
 
     onBranchNodeEvent($evt){

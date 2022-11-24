@@ -4,31 +4,50 @@ const Messenger = require(`${appRoot}/src/utils/messenger`);
 const BranchTree = require(`${appRoot}/src/components/branchTree`);
 const BranchModel = require(`${appRoot}/src/models/branch`);
 const WorkspaceManager = require(`${appRoot}/src/managers/workspaceManager`);
+const CmsService = require(`${appRoot}/src/services/cms`)
 
 class AutoMergeController{
-    _branchTree
-    _branchModel
+    _branchTree;
+    _branchModel;
+    _cmsService;
 
     constructor(){}
 
     async init(){
         let _self = this;
-        _self.initBranchModel();
+        _self.initCmsService();
+        await _self.initBranchModel();
+        await _self.initTelegramModel();
         _self.initBranchTree();
         await _self.initWorkspaceManager();
     }
 
-    initBranchModel(){
+    initCmsService(){
+        Messenger.openClose('CMS SERVICE CREATE');
+        let _self = this;
+        _self._cmsService = new CmsService();
+        Messenger.openClose('/CMS SERVICE CREATE');
+    }
+
+    async initBranchModel(){
         let _self = this;
         _self._branchModel = new BranchModel();
+        let _branchTable = await _self._cmsService.getBranchTable();
+        _self._branchModel.setBranchTable(_branchTable);
+        // console.log("DEBUG: [AutoMerge] initBranchModel _branchTable: ", _branchTable);
+    }
+
+    async initTelegramModel(){
+        let _self = this;
+        // TODO:
     }
 
     initBranchTree(){
         Messenger.openClose('TREE CREATION');
         let _self = this,
-            _branchRelationship = _self._branchModel.getBranchRelationship(),
+            _branchTable = _self._branchModel.getBranchTable(),
             _rootBranch = _self._branchModel.getRootBranch();
-        _self._branchTree = new BranchTree(_branchRelationship, _rootBranch);
+        _self._branchTree = new BranchTree(_branchTable, _rootBranch);
         _self._branchTree._event.on('branchTreeEvent', _self.onBranchTreeEvent, this);
         Messenger.openClose('/TREE CREATION');
     }
@@ -50,12 +69,12 @@ class AutoMergeController{
 
     mergeSuccessHandler($evt){
         // TODO: Implement merge success handler
-        console.log("DEBUG: [AutoMerge_C] mergeSuccessHandler", $evt);
+        console.log("DEBUG: [AutoMerge_C] [TODO] mergeSuccessHandler called");
     }
     
     mergeFailHandler($evt){
         // TODO: Implement merge failed handler
-        console.log("DEBUG: [AutoMerge_C] mergeFailHandler", $evt);
+        console.log("DEBUG: [AutoMerge_C] [TODO] mergeFailHandler called");
     }
 
     async startMerge(){
