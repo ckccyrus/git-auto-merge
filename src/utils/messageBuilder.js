@@ -8,11 +8,11 @@ class MessageBuilder{
         _msg += "Merge failed!\n=====================\n\n";
         for (let $i = 0; $i < $errorStack.length; $i++) {
             const _error = $errorStack[$i];
-            _msg += `\u{1F4A5} <b>${_error['from']}</b> ----> <b>${_error['to']}</b>`;
+            _msg += `\u{1F4A5} <b>${_error['from']}</b> ----> <b>${_error['to']}</b> `;
             for (let $j = 0; $j < _error['inCharge'].length; $j++) {
                 const _inChargeCode = _error['inCharge'][$j],
                       _inChargeChatId = _error['inChargeId'][$j];
-                _msg += ` <a href="tg://user?id=${_inChargeChatId}">@${_inChargeCode}</a> `
+                _msg += `<a href="tg://user?id=${_inChargeChatId}">@${_inChargeCode}</a> `
             }
             _msg += '\n';
         }

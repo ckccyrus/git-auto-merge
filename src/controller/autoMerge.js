@@ -1,5 +1,4 @@
 const appRoot = require('app-root-path');
-const MergeFail = require('../models/mergeFail');
 require('dotenv').config({ path: `${appRoot}/.env` });
 const Messenger = require(`${appRoot}/src/utils/messenger`);
 const BranchTree = require(`${appRoot}/src/components/branchTree`);
@@ -8,14 +7,14 @@ const TelegramModel = require(`${appRoot}/src/models/telegram`);
 const WorkspaceManager = require(`${appRoot}/src/managers/workspaceManager`);
 const CmsService = require(`${appRoot}/src/services/cms`);
 const MessageBuilderUtil = require(`${appRoot}/src/utils/messageBuilder`);
-const MergeFailModel = require(`${appRoot}/src/models/mergeFail`);
+const MergeRecordModel = require(`${appRoot}/src/models/mergeRecord`);
 
 class AutoMergeController{
     _branchTree;
     _branchModel;
     _telegramModel;
     _cmsService;
-    _mergeFailModel;
+    _mergeRecordModel;
 
     constructor(){}
 
@@ -26,7 +25,7 @@ class AutoMergeController{
         await _self.initTelegramModel();
         _self.initBranchTree();
         await _self.initWorkspaceManager();
-        _self.initMergeFailModel();
+        _self.initMergeRecordModel();
     }
 
     initCmsService(){
@@ -50,9 +49,9 @@ class AutoMergeController{
         _self._telegramModel.setTelegramTable(_telegramModel);
     }
 
-    initMergeFailModel(){
+    initMergeRecordModel(){
         let _self = this;
-        _self._mergeFailModel = new MergeFailModel();
+        _self._mergeRecordModel = new MergeRecordModel();
     }
 
     initBranchTree(){
@@ -81,57 +80,23 @@ class AutoMergeController{
     }
 
     async mergeSuccessHandler($evt){
-        console.log("DEBUG: [AutoMerge_C] [TODO] mergeSuccessHandler called");
-
-        // let _self = this,
-        //     _fromBranch = $evt.from,
-        //     _toBranch = $evt.to,
-        //     _failedMsg = MessageBuilderUtil.getMergeConflictMsg(_fromBranch, _toBranch),
-        //     _inChargeStaffCodeArr = _self._branchModel.getBranchInCharge(_toBranch),
-        //     _inChargeStaffChatIdArr = _self._telegramModel.getChatIdByStaffCodeArr(_inChargeStaffCodeArr),
-        //     _frontendGroupTG = _self._telegramModel.getFrontendGroupTG(),
-        //     _fullMsg = appendMentionToMsg();
-
-        // console.log("DEBUG: _inChargeStaffChatIdArr: ", _inChargeStaffChatIdArr, _frontendGroupTG);
-
-        // await _self._cmsService.sendMessage(_frontendGroupTG, _fullMsg);
-
-        // function appendMentionToMsg(){
-        //     let _msg = _failedMsg;
-        //     for (let $i = 0; $i < _inChargeStaffChatIdArr.length; $i++) {
-        //         const _chatId = _inChargeStaffChatIdArr[$i],
-        //               _chatKey = _inChargeStaffCodeArr[$i];
-        //         // _msg = _msg + `[inline mention of a user](tg://user?id=${_chatId}) `;
-        //         _msg = _msg + `\n<a href="tg://user?id=${_chatId}">@${_chatKey}</a>`;
-        //     }
-        //     return _msg;
-        // }
-
         let _self = this;
-        _self._mergeFailModel.addMergeFailRecord($evt);
+        _self._mergeRecordModel.addMergeSuccessRecord($evt);
     }
     
     async mergeFailHandler($evt){
-        console.log("DEBUG: [AutoMerge_C] [TODO] mergeFailHandler called");
-
-        // let _self = this,
-        //     _fromBranch = $evt.from,
-        //     _toBranch = $evt.to,
-        //     _failedMsg = MessageBuilderUtil.getMergeConflictMsg(_fromBranch, _toBranch),
-        //     _inChargeStaffCodeArr = _self._branchModel.getBranchInCharge(_toBranch),
-        //     _inChargeStaffChatIdArr = _self._telegramModel.getChatIdByStaffCodeArr(_inChargeStaffCodeArr),
-        //     _frontendGroupTG = _self._telegramModel.getFrontendGroupTG();
-
-        // console.log("DEBUG: _inChargeStaffChatIdArr: ", _inChargeStaffChatIdArr);
+        let _self = this;
+        _self._mergeRecordModel.addMergeFailRecord($evt);
     }
 
     async sendMergeErrorMessage(){
         let _self = this,
-            _mergeErrorStack = JSON.parse(JSON.stringify(_self._mergeFailModel.getMergeFailStack())),
-            _mergeErrorStackWithInChargeDetail = _self.appendInChargeDetail(_mergeErrorStack),
-            _mergeErrorMsg = MessageBuilderUtil.getMergeFailMsg(_mergeErrorStackWithInChargeDetail),
+            _mergeErrorRecords = JSON.parse(JSON.stringify(_self._mergeRecordModel.getMergeFailRecords())),
+            _mergeErrorRecordsWithInChargeDetail = _self.appendInChargeDetail(_mergeErrorRecords),
+            _mergeErrorMsg = MessageBuilderUtil.getMergeFailMsg(_mergeErrorRecordsWithInChargeDetail),
             _frontendGroupTG = _self._telegramModel.getFrontendGroupTG();
 
+        if(_mergeErrorRecords.length <= 0) return;
         await _self._cmsService.sendMessage(_frontendGroupTG, _mergeErrorMsg);
     }
 
@@ -161,6 +126,11 @@ class AutoMergeController{
         Messenger.openClose('POST MERGE ACTION');
         let _self = this;
         await _self.sendMergeErrorMessage();
+        let _mergeSuccessRecords = _self._mergeRecordModel.getMergeSuccessRecords(),
+            _mergeFailRecords = _self._mergeRecordModel.getMergeFailRecords();
+        
+        console.log('Success:', _mergeSuccessRecords);
+        console.log('Fail:', _mergeFailRecords);
         Messenger.openClose('/POST MERGE ACTION');
     }
 }

@@ -40,8 +40,6 @@ class CmsService{
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.GET_TELEGRAM_TABLE_SUFFIX}`,
             _result = await axios.get(_url);
-        // console.log("DEBUG: calling getTelegramTable...");
-        // console.log("DEBUG: getTelegramTable result: ", _result.data.telegrams);
         return _result.data.telegrams;
     }
 
@@ -49,8 +47,6 @@ class CmsService{
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.GET_BRANCH_TABLE_SUFFIX}`,
             _result = await axios.get(_url);
-        // console.log("DEBUG: calling getBranchTable...");
-        // console.log("DEBUG: getBranchTable result: ", _result.data.allBranches);
         return _result.data.allBranches;
     }
 
