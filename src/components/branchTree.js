@@ -31,9 +31,9 @@ class BranchTree {
         _self._treeRootNode._event.on('branchNodeEvent', _self.onRootNodeEvent, _self)
     }
 
-    onRootNodeEvent($evt){
+    async onRootNodeEvent($evt){
         let _self = this;
-        _self._event.dispatch('branchTreeEvent', $evt);
+        await _self._event.dispatch('branchTreeEvent', $evt);
     }
 
     async propagate(){

@@ -81,9 +81,9 @@ class BranchNode {
         return _childrenDataArr;
     }
 
-    onBranchNodeEvent($evt){
+    async onBranchNodeEvent($evt){
         let _self = this;
-        _self._event.dispatch('branchNodeEvent', $evt);
+        await _self._event.dispatch('branchNodeEvent', $evt);
     }
 
     async propagate(){
@@ -134,18 +134,18 @@ class BranchNode {
 
         if(_isMergeSuccess) {
             _self.updateMergeStatus('SUCCESS');
-            _self.dispatchMergeSuccessEvent(_parentBranchName, _destinationBranchName, _mergeResult);
+            await _self.dispatchMergeSuccessEvent(_parentBranchName, _destinationBranchName, _mergeResult);
         }else{
             _self.updateMergeStatus('FAIL');
-            _self.dispatchMergeFailEvent(_parentBranchName, _destinationBranchName, _mergeResult);
+            await _self.dispatchMergeFailEvent(_parentBranchName, _destinationBranchName, _mergeResult);
         }
 
         return _isMergeSuccess;
     }
 
-    dispatchMergeFailEvent($parentBranch, $destinationBranch, $result){
+    async dispatchMergeFailEvent($parentBranch, $destinationBranch, $result){
         let _self = this;
-        _self._event.dispatch('branchNodeEvent', {
+        await _self._event.dispatch('branchNodeEvent', {
             eventType: 'mergeFail',
             from: $parentBranch,
             to: $destinationBranch,
@@ -153,9 +153,9 @@ class BranchNode {
         })
     }
 
-    dispatchMergeSuccessEvent($parentBranch, $destinationBranch, $result){
+    async dispatchMergeSuccessEvent($parentBranch, $destinationBranch, $result){
         let _self = this;
-        _self._event.dispatch('branchNodeEvent', {
+        await _self._event.dispatch('branchNodeEvent', {
             eventType: 'mergeSuccess',
             from: $parentBranch,
             to: $destinationBranch,

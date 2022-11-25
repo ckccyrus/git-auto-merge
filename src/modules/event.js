@@ -22,7 +22,7 @@ class Event{
         }
     }
 
-    dispatch($eventName, $sendObj){
+    async dispatch($eventName, $sendObj){
         let _self = this;
         if(!_self._events[$eventName]) return
         for(let i = 0; i < _self._events[$eventName].length; i++){
@@ -30,7 +30,7 @@ class Event{
                 _callback = _eventObj.callback,
                 _context = _eventObj.context;
             if(_context){
-                _callback.call(_context, $sendObj)
+                await _callback.call(_context, $sendObj)
             } else {
                 _callback($sendObj);
             }

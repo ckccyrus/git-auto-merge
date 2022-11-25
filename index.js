@@ -9,6 +9,7 @@ async function asyncMain(){
     let _autoMergeController = new AutoMergeController();
     await _autoMergeController.init();
     await _autoMergeController.startMerge();
+    await _autoMergeController.postMergeAction();
 
     Messenger.openClose('/MAIN');
 }
