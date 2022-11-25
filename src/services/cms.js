@@ -42,7 +42,7 @@ class CmsService{
             _result = await axios.get(_url);
         // console.log("DEBUG: calling getTelegramTable...");
         // console.log("DEBUG: getTelegramTable result: ", _result.data.telegrams);
-        return _result;
+        return _result.data.telegrams;
     }
 
     async getBranchTable(){

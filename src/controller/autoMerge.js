@@ -3,12 +3,14 @@ require('dotenv').config({ path: `${appRoot}/.env` });
 const Messenger = require(`${appRoot}/src/utils/messenger`);
 const BranchTree = require(`${appRoot}/src/components/branchTree`);
 const BranchModel = require(`${appRoot}/src/models/branch`);
+const TelegramModel = require(`${appRoot}/src/models/telegram`);
 const WorkspaceManager = require(`${appRoot}/src/managers/workspaceManager`);
 const CmsService = require(`${appRoot}/src/services/cms`)
 
 class AutoMergeController{
     _branchTree;
     _branchModel;
+    _telegramModel;
     _cmsService;
 
     constructor(){}
@@ -34,12 +36,13 @@ class AutoMergeController{
         _self._branchModel = new BranchModel();
         let _branchTable = await _self._cmsService.getBranchTable();
         _self._branchModel.setBranchTable(_branchTable);
-        // console.log("DEBUG: [AutoMerge] initBranchModel _branchTable: ", _branchTable);
     }
 
     async initTelegramModel(){
         let _self = this;
-        // TODO:
+        _self._telegramModel = new TelegramModel();
+        let _telegramModel = await _self._cmsService.getTelegramTable();
+        _self._telegramModel.setTelegramTable(_telegramModel);
     }
 
     initBranchTree(){

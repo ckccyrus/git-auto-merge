@@ -8,8 +8,14 @@ class TelegramModel{
         let _self = this;
     }
 
-    setTelegramTable(){
-        
+    setTelegramTable($telegramTable){
+        let _self = this;
+        _self._telegramTable = $telegramTable;
+    }
+
+    getTelegramTable(){
+        let _self = this;
+        return _self._telegramTable;
     }
 }
 
