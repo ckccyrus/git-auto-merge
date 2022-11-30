@@ -4,10 +4,15 @@ class BranchModel{
     _branchTable;
 
     _CONFIG = {
-        'ROOT_BRANCH': `${process.env.ROOT_BRANCH || 'master'}`
+        'ROOT_BRANCH': `${process.env.ROOT_BRANCH}`
     }
 
-    constructor(){}
+    constructor(){
+        let _self = this;
+        if(_self._CONFIG.ROOT_BRANCH == undefined){
+            new Error ('[BranchModel] ROOT_BRANCH is undefined!')
+        }
+    }
 
     setBranchTable($branchTable){
         let _self = this;
