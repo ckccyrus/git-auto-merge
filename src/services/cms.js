@@ -15,8 +15,8 @@ class CmsService{
         'ACCESS_TOKEN': 'a223824d1256db55c5f6f3e2d3303043', //Pimcore user access token
         'SEND_MESSAGE_API_SUFFIX': '/api/SendMessage',
         'GET_BRANCH_TABLE_SUFFIX': '/api/autoMergeList',
-        'SAVE_MERGE_FAIL_RECORDS': '/api/saveMergeFailRecords',
-        'GET_TELEGRAM_TABLE_SUFFIX': '/api/autoMergeGetAllTelegrams'
+        'GET_TELEGRAM_TABLE_SUFFIX': '/api/autoMergeGetAllTelegrams',
+        'SAVE_MERGE_FAIL_RECORDS': '/api/autoMergeSaveMergeFailRecords'
     }
 
     constructor(){
