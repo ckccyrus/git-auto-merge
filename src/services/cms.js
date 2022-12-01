@@ -15,6 +15,8 @@ class CmsService{
         'ACCESS_TOKEN': 'a223824d1256db55c5f6f3e2d3303043', //Pimcore user access token
         'SEND_MESSAGE_API_SUFFIX': '/api/SendMessage',
         'GET_BRANCH_TABLE_SUFFIX': '/api/autoMergeList',
+        'SEND_MERGE_SUCCESS_SUFFIX': '/api/autoMergeMergeSuccess',
+        'SEND_MERGE_FAIL_SUFFIX': '/api/autoMergeMergeFail',
         'GET_TELEGRAM_TABLE_SUFFIX': '/api/autoMergeGetAllTelegrams',
         'SAVE_MERGE_FAIL_RECORDS': '/api/autoMergeSaveMergeFailRecords'
     }
@@ -39,7 +41,7 @@ class CmsService{
     }
 
     async sendMergeFailRecords($mergeFailRecords){
-        console.log(`[CMS] sending mergeFailRecords to CMS`, $mergeFailRecords);
+        console.log(`[CMS] sending mergeFailRecords to CMS`);
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SAVE_MERGE_FAIL_RECORDS}`,
             _data = {
@@ -48,7 +50,33 @@ class CmsService{
             },
             _headers = { 'content-type': 'application/x-www-form-urlencoded' },
             _result = await axios.post(_url, querystring.stringify(_data), {_headers});
-        console.log(`[CMS] Sent mergeFailRecords to CMS with result: `, _result);
+        console.log(`[CMS] Sent mergeFailRecords to CMS with result: `);
+    }
+
+    async sendMergeSuccess($successRecord){
+        console.log(`[CMS] Sending mergeSuccess to CMS from ${$successRecord.from} to ${$successRecord.to}`);
+        let _self = this,
+            _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MERGE_SUCCESS_SUFFIX}`,
+            _data = {
+                "token": _self._CONFIG.ACCESS_TOKEN,
+                "from": $successRecord.from,
+                "to": $successRecord.to
+            },
+            _headers = { 'content-type': 'application/x-www-form-urlencoded' },
+            _result = await axios.post(_url, querystring.stringify(_data), {_headers});
+    }
+
+    async sendMergeFail($failRecord){
+        console.log(`[CMS] Sending mergeFail to CMS from ${$failRecord.from} to ${$failRecord.to}`);
+        let _self = this,
+            _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MERGE_FAIL_SUFFIX}`,
+            _data = {
+                "token": _self._CONFIG.ACCESS_TOKEN,
+                "from": $failRecord.from,
+                "to": $failRecord.to
+            },
+            _headers = { 'content-type': 'application/x-www-form-urlencoded' },
+            _result = await axios.post(_url, querystring.stringify(_data), {_headers});
     }
 
     async getTelegramTable(){
