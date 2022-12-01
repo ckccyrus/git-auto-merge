@@ -39,7 +39,7 @@ class CmsService{
     }
 
     async sendMergeFailRecords($mergeFailRecords){
-        console.log(`[CMS] sending mergeFailRecords to CMS`);
+        console.log(`[CMS] sending mergeFailRecords to CMS`, $mergeFailRecords);
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SAVE_MERGE_FAIL_RECORDS}`,
             _data = {
