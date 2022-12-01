@@ -19,7 +19,7 @@ class CmsService{
         'SEND_MERGE_SUCCESS_SUFFIX': '/api/autoMergeMergeSuccess',
         'SEND_MERGE_FAIL_SUFFIX': '/api/autoMergeMergeFail',
         'GET_TELEGRAM_TABLE_SUFFIX': '/api/autoMergeGetAllTelegrams',
-        'SAVE_MERGE_FAIL_RECORDS': '/api/autoMergeSaveMergeFailRecords'
+        // 'SAVE_MERGE_FAIL_RECORDS': '/api/autoMergeSaveMergeFailRecords'
     }
 
     constructor(){
@@ -41,18 +41,18 @@ class CmsService{
         console.log(`[CMS] Sent message to ${$targetTgId} with message ${$message}`);
     }
 
-    async sendMergeFailRecords($mergeFailRecords){
-        console.log(`[CMS] sending mergeFailRecords to CMS`);
-        let _self = this,
-            _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SAVE_MERGE_FAIL_RECORDS}`,
-            _data = {
-                "token": _self._CONFIG.ACCESS_TOKEN,
-                "records": JSON.stringify($mergeFailRecords)
-            },
-            _headers = { 'content-type': 'application/x-www-form-urlencoded' },
-            _result = await axios.post(_url, querystring.stringify(_data), {_headers});
-        console.log(`[CMS] Sent mergeFailRecords to CMS with result: `);
-    }
+    // async sendMergeFailRecords($mergeFailRecords){
+    //     console.log(`[CMS] sending mergeFailRecords to CMS`);
+    //     let _self = this,
+    //         _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SAVE_MERGE_FAIL_RECORDS}`,
+    //         _data = {
+    //             "token": _self._CONFIG.ACCESS_TOKEN,
+    //             "records": JSON.stringify($mergeFailRecords)
+    //         },
+    //         _headers = { 'content-type': 'application/x-www-form-urlencoded' },
+    //         _result = await axios.post(_url, querystring.stringify(_data), {_headers});
+    //     console.log(`[CMS] Sent mergeFailRecords to CMS with result: `);
+    // }
 
     async sendMergeStart($rootBranch){
         console.log(`[CMS] Sending mergeStart to CMS with root ${$rootBranch}`);

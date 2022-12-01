@@ -125,12 +125,12 @@ class AutoMergeController{
         await _self._cmsService.sendMessage(_frontendGroupTG, _mergeErrorMsg);
     }
 
-    async createMergeErrorRecords(){
-        let _self = this,
-            _mergeErrorRecords = JSON.parse(JSON.stringify(_self._mergeRecordModel.getMergeFailRecords()));
+    // async createMergeErrorRecords(){
+    //     let _self = this,
+    //         _mergeErrorRecords = JSON.parse(JSON.stringify(_self._mergeRecordModel.getMergeFailRecords()));
 
-        await _self._cmsService.sendMergeFailRecords(_mergeErrorRecords);
-    }
+    //     await _self._cmsService.sendMergeFailRecords(_mergeErrorRecords);
+    // }
 
     async sendMergeSuccess($evt){
         let _self = this;
@@ -156,7 +156,7 @@ class AutoMergeController{
         Messenger.openClose('POST MERGE ACTION');
         let _self = this;
         await _self.sendMergeErrorMessage();
-        await _self.createMergeErrorRecords();
+        // await _self.createMergeErrorRecords();
         let _mergeSuccessRecords = _self._mergeRecordModel.getMergeSuccessRecords(),
             _mergeFailRecords = _self._mergeRecordModel.getMergeFailRecords();
         
