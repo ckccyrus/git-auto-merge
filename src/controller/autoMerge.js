@@ -88,7 +88,7 @@ class AutoMergeController{
     async mergeFailHandler($evt){
         let _self = this;
         _self._mergeRecordModel.addMergeFailRecord($evt);
-        _self.sendMergeFail();
+        _self.sendMergeFail($evt);
     }
 
     appendInChargeDetail($errorStack){
