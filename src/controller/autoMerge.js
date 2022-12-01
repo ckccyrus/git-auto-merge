@@ -89,17 +89,6 @@ class AutoMergeController{
         _self._mergeRecordModel.addMergeFailRecord($evt);
     }
 
-    async sendMergeErrorMessage(){
-        let _self = this,
-            _mergeErrorRecords = JSON.parse(JSON.stringify(_self._mergeRecordModel.getMergeFailRecords())),
-            _mergeErrorRecordsWithInChargeDetail = _self.appendInChargeDetail(_mergeErrorRecords),
-            _mergeErrorMsg = MessageBuilderUtil.getMergeFailMsg(_mergeErrorRecordsWithInChargeDetail),
-            _frontendGroupTG = _self._telegramModel.getFrontendGroupTG();
-
-        if(_mergeErrorRecords.length <= 0) return;
-        await _self._cmsService.sendMessage(_frontendGroupTG, _mergeErrorMsg);
-    }
-
     appendInChargeDetail($errorStack){
         let _self = this,
             _errorStack = JSON.parse(JSON.stringify($errorStack));
@@ -122,10 +111,33 @@ class AutoMergeController{
         Messenger.openClose('/TREE PROPAGATE');
     }
 
+    async sendMergeErrorMessage(){
+        let _self = this,
+            _mergeErrorRecords = JSON.parse(JSON.stringify(_self._mergeRecordModel.getMergeFailRecords())),
+            _mergeErrorRecordsWithInChargeDetail = _self.appendInChargeDetail(_mergeErrorRecords),
+            _mergeErrorMsg = MessageBuilderUtil.getMergeFailMsg(_mergeErrorRecordsWithInChargeDetail),
+            _frontendGroupTG = _self._telegramModel.getFrontendGroupTG();
+
+        if(_mergeErrorRecords.length <= 0) return;
+        await _self._cmsService.sendMessage(_frontendGroupTG, _mergeErrorMsg);
+    }
+
+    async createMergeErrorRecord(){
+        let _self = this,
+            _mergeErrorRecords = JSON.parse(JSON.stringify(_self._mergeRecordModel.getMergeFailRecords()));
+
+        await _self._cmsService.sendMergeFailRecords(_mergeErrorRecords);
+    }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     async postMergeAction(){
         Messenger.openClose('POST MERGE ACTION');
         let _self = this;
         await _self.sendMergeErrorMessage();
+        await _self.createMergeErrorRecord();
         let _mergeSuccessRecords = _self._mergeRecordModel.getMergeSuccessRecords(),
             _mergeFailRecords = _self._mergeRecordModel.getMergeFailRecords();
         
