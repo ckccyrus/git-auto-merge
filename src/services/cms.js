@@ -44,7 +44,7 @@ class CmsService{
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SAVE_MERGE_FAIL_RECORDS}`,
             _data = {
                 "token": _self._CONFIG.ACCESS_TOKEN,
-                "records": $mergeFailRecords
+                "records": JSON.stringify($mergeFailRecords)
             },
             _headers = { 'content-type': 'application/x-www-form-urlencoded' },
             _result = await axios.post(_url, querystring.stringify(_data), {_headers});
