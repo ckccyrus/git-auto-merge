@@ -109,6 +109,7 @@ class AutoMergeController{
         let _self = this;
         Messenger.openClose('TREE PROPAGATE');
         // TODO: update cms branch table to all pending, last trigger time
+        _self.sendMergeStart();
         await _self._branchTree.propagate();
         Messenger.openClose('/TREE PROPAGATE');
     }
@@ -139,6 +140,12 @@ class AutoMergeController{
     async sendMergeFail($evt){
         let _self = this;
         await _self._cmsService.sendMergeFail($evt);
+    }
+
+    async sendMergeStart(){
+        let _self = this,
+            _rootBranch = _self._branchModel.getRootBranch();
+        await _self._cmsService.sendMergeStart(_rootBranch);
     }
 
     sleep(ms) {

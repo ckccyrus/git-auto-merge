@@ -15,6 +15,7 @@ class CmsService{
         'ACCESS_TOKEN': 'a223824d1256db55c5f6f3e2d3303043', //Pimcore user access token
         'SEND_MESSAGE_API_SUFFIX': '/api/SendMessage',
         'GET_BRANCH_TABLE_SUFFIX': '/api/autoMergeList',
+        'SEND_MERGE_START_SUFFIX': '/api/autoMergeMergeStart',
         'SEND_MERGE_SUCCESS_SUFFIX': '/api/autoMergeMergeSuccess',
         'SEND_MERGE_FAIL_SUFFIX': '/api/autoMergeMergeFail',
         'GET_TELEGRAM_TABLE_SUFFIX': '/api/autoMergeGetAllTelegrams',
@@ -51,6 +52,18 @@ class CmsService{
             _headers = { 'content-type': 'application/x-www-form-urlencoded' },
             _result = await axios.post(_url, querystring.stringify(_data), {_headers});
         console.log(`[CMS] Sent mergeFailRecords to CMS with result: `);
+    }
+
+    async sendMergeStart($rootBranch){
+        console.log(`[CMS] Sending mergeStart to CMS with root ${$rootBranch}`);
+        let _self = this,
+            _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MERGE_START_SUFFIX}`,
+            _data = {
+                "token": _self._CONFIG.ACCESS_TOKEN,
+                "root": $rootBranch
+            },
+            _headers = { 'content-type': 'application/x-www-form-urlencoded' },
+            _result = await axios.post(_url, querystring.stringify(_data), {_headers});
     }
 
     async sendMergeSuccess($successRecord){
