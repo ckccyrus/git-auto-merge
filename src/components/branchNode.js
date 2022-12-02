@@ -32,9 +32,10 @@ class BranchNode {
         _self._isRoot = $isRoot;
         _self._cmsService = new CmsService();
         _self._branchData = _self.getBranchDataByName(_self._branchName);
-        _self._inCharge = JSON.parse(_self._branchData['mInCharge']);
-        _self._parentNode = _self._branchData['mParentBranch'];
-        _self._status = _self._branchData['mStatus'];
+        _self._isValidNode = _self._branchData != null;
+        _self._inCharge = _self._isValidNode && JSON.parse(_self._branchData['mInCharge']) || null;
+        _self._parentNode = _self._isValidNode && _self._branchData['mParentBranch'] || null;
+        _self._status = _self._isValidNode && _self._branchData['mStatus'] || null;
         _self.printBranchNodeCreatedMessage();
 
     }
@@ -42,7 +43,7 @@ class BranchNode {
     printBranchNodeCreatedMessage(){
         let _self = this,
             _childrenNameArr = _self._childrenDataArr.map($childData => $childData['mBranchName']);
-        console.log(`[BranchNode] BrachNode [${_self._branchName}] is created, its children are: [${_childrenNameArr}], it is in charged by ${_self._inCharge}`)
+        console.log(`[BranchNode] BranchNode [${_self._branchName}] is created, its children are: [${_childrenNameArr}], it is in charged by ${_self._inCharge}`)
     }
 
     getBranchDataByName($brancName){

@@ -60,7 +60,7 @@ class AutoMergeController{
             _branchTable = _self._branchModel.getBranchTable(),
             _rootBranch = _self._branchModel.getRootBranch();
         _self._branchTree = new BranchTree(_branchTable, _rootBranch);
-        _self._branchTree._event.on('branchTreeEvent', _self.onBranchTreeEvent, this); // TODO: problem, how to handle event that is async?
+        _self._branchTree._event.on('branchTreeEvent', _self.onBranchTreeEvent, this);
         Messenger.openClose('/TREE CREATION');
     }
 
