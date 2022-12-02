@@ -70,10 +70,10 @@ class Workspace{
 
         console.log(`==================================================`);
         shelljs.cd(_self._directory+'/'+_self._folderName);
-        shelljs.exec(`git checkout ${$sourceBranch}`);
+        shelljs.exec(`git checkout ${$sourceBranch} --`);
         shelljs.exec(`git fetch`);
         shelljs.exec(`git pull`);
-        shelljs.exec(`git checkout ${$destinationBranch}`);
+        shelljs.exec(`git checkout ${$destinationBranch} --`);
         shelljs.exec(`git fetch`);
         shelljs.exec(`git pull`);
         console.log(`==================================================`);

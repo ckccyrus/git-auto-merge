@@ -122,7 +122,7 @@ class WorkspaceManager{
         await removeAllLocalBranches(_allLocalBranchesExcludeMasterArr);
 
         async function updateMaster(){
-            await _self._git.raw('checkout', 'master');
+            await _self._git.raw('checkout', 'master', '--');
             await _self._git.raw('pull', 'origin', 'master')
         }
 
