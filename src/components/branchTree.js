@@ -21,9 +21,9 @@ class BranchTree {
         let _self = this,
             _treeRootName = _self._treeRootName,
             _branchTable = _self._branchTable,
-            _parentNode = null;
+            _isRoot = true;
         if(!_treeRootName) throw('[BranchTree] _treeRootName is undefined!')
-        _self._treeRootNode = new BranchNode(_treeRootName, _parentNode, _branchTable);
+        _self._treeRootNode = new BranchNode(_treeRootName, _branchTable, _isRoot);
     }
 
     addListenerToRootNode(){

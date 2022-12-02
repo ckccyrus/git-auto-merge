@@ -12,29 +12,29 @@ class BranchNode {
     _branchData;
     _branchName;
     _parentNode;
-    _mergeStatus;       // PENDING || SUCCESS || FAIL
+    _status;       // PENDING || SUCCESS || FAIL
     _workspaceManager;
     _childrenNodes;
     _childrenDataArr;
     _branchTable; // TODO: should move to better position
     _childNodeReadyCount;
 
-    constructor($branchName, $parentNode, $branchTable){
+    constructor($branchName, $branchTable, $isRoot){
         let _self = this;
         _self._event = new Event();
         _self._workspaceManager = WorkspaceManager.getInstance();
         _self._branchName = $branchName;
-        _self._parentNode = $parentNode;
         _self._branchTable = $branchTable;
         _self._childrenNodes = [];
         _self._childrenDataArr = _self.getAllChildrenDataArr();
-        _self._mergeStatus = 'PENDING';
         _self.createAllChildrenNodes();
         _self.listenAllChildrenNodes();
-        _self._isRoot = ($parentNode == null) ? true : false;
+        _self._isRoot = $isRoot;
         _self._cmsService = new CmsService();
         _self._branchData = _self.getBranchDataByName(_self._branchName);
         _self._inCharge = JSON.parse(_self._branchData['mInCharge']);
+        _self._parentNode = _self._branchData['mParentBranch'];
+        _self._status = _self._branchData['mStatus'];
         _self.printBranchNodeCreatedMessage();
 
     }
@@ -57,10 +57,10 @@ class BranchNode {
     // methods 
     createAllChildrenNodes(){
         let _self = this,
-            _parentNode = this;
+            _isNotRoot = false;
         _self._childrenDataArr.forEach($childData => {
             let _childName = $childData['mBranchName'];
-            _self._childrenNodes.push(new BranchNode(_childName, _parentNode, _self._branchTable));
+            _self._childrenNodes.push(new BranchNode(_childName, _self._branchTable, _isNotRoot));
         })
     }
 
@@ -87,20 +87,24 @@ class BranchNode {
     }
 
     async propagate(){
-        let _self = this;
-        if(!_self._isRoot){
+        let _self = this,
+            _needMerge = _self.checkIfNeedMerge(),
+            _needMergeAndFailed;
+
+        console.log(`[BranchNode] Branch ${this._branchName} need merge: ${_needMerge}`);
+
+        if(_needMerge){
             let _isMergeSuccess = await _self.mergeSchedule();
-            if(_isMergeSuccess){
-                for (const $childNode of _self._childrenNodes) {
-                    await $childNode.propagate();
-                }
-            }else{
-                console.log(`[BranchNode] Since merge fail from ${_self._parentNode.getBranchName} to ${_self._branchName}, stop downward propagate.`);
-            }
-        }else{
-            for (const $childNode of _self._childrenNodes) {
-                await $childNode.propagate();
-            }
+            _needMergeAndFailed = _isMergeSuccess == false;
+        }
+
+        if(_needMergeAndFailed){
+            console.log(`[BranchNode] Since merge fail from ${_self._parentNode} to ${_self._branchName}, stop downward propagate.`);
+            return
+        }
+
+        for (const $childNode of _self._childrenNodes) {
+            await $childNode.propagate();
         }
 
         // Propagate in parallel
@@ -114,13 +118,27 @@ class BranchNode {
         // }
     }
 
+    checkIfNeedMerge(){
+        console.log(`[BranchNode] checking ${this._branchName} need merge of not`);
+        console.log(`\t isRoot: ${this._isRoot}`);
+        console.log(`\t parentNode: ${this._parentNode}`);
+        console.log(`\t isParetValid: ${!!this._parentNode}`);
+        console.log(`\t isFail: ${this._status == 'fail'}`);
+        let _self = this,
+            _isParetValid = !!_self._parentNode,
+            _isFail = _self._status == 'fail';
+        if(!_self._isRoot) return true;
+        if(_self._isRoot && _isParetValid && _isFail) return true
+        return false;
+    }
+
     async mergeSchedule(){ // need parent and child branch name to merge
         let _self = this,
             _mergeResult,
             _mergeResultObj,
             _isMergeSuccess = false,
             _curBranchName = _self._branchName,
-            _parentBranchName = _self._isRoot ? '' : _self._parentNode.getBranchName,
+            _parentBranchName = _self._parentNode,
             _sourceBranchName = _parentBranchName,
             _destinationBranchName = _curBranchName,
             _workspaceManager = _self._workspaceManager,
@@ -133,10 +151,8 @@ class BranchNode {
         _workspaceManager.releaseWorkspace(_workspace);
 
         if(_isMergeSuccess) {
-            _self.updateMergeStatus('SUCCESS');
             await _self.dispatchMergeSuccessEvent(_parentBranchName, _destinationBranchName, _mergeResult);
         }else{
-            _self.updateMergeStatus('FAIL');
             await _self.dispatchMergeFailEvent(_parentBranchName, _destinationBranchName, _mergeResult);
         }
 
@@ -161,11 +177,6 @@ class BranchNode {
             to: $destinationBranch,
             result: $result
         });
-    }
-
-    updateMergeStatus($newMergeStatus){
-        let _self = this;
-        _self._mergeStatus = $newMergeStatus;
     }
 
     // getter and setter
