@@ -66,7 +66,11 @@ class AutoMergeController{
 
     async initWorkspaceManager(){
         Messenger.openClose('WORKSPACE INIT PRIMARY WORKSPACE');
-        await WorkspaceManager.getInstance().initPrimaryWorkspace();
+        try{
+            await WorkspaceManager.getInstance().initPrimaryWorkspace();
+        }catch($err){
+            console.log("ERROR: initWorkspaceManager error: ", initWorkspaceManager);
+        }
         Messenger.openClose('/WORKSPACE INIT PRIMARY WORKSPACE');
     }
 
