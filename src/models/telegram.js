@@ -5,7 +5,7 @@ class TelegramModel{
     _telegramTable;
 
     _CONFIG={
-        "FRONTEND_GROUP_TG_KEY": "BotGroup"
+        "FRONTEND_GROUP_TG_KEY": "Frontend-Auto-Merge-Error"
     }
 
     constructor(){
