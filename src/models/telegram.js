@@ -48,6 +48,18 @@ class TelegramModel{
             if(_telegramData['o_key'] === $staffCode) return _telegramData['mchatId'];
         }
     }
+
+    getAllFrontendTG(){
+        let _self = this,
+            _result = [];
+        for (let $i = 0; $i < _self._telegramTable.length; $i++) {
+            const _telegramData = _self._telegramTable[$i];
+            if(_telegramData['mType'] === 'individual'){
+                _result.push(_telegramData)
+            }
+        }
+        return _result;
+    }
 }
 
 module.exports = TelegramModel;

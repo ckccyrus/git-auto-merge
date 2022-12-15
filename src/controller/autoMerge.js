@@ -122,7 +122,8 @@ class AutoMergeController{
         let _self = this,
             _mergeErrorRecords = JSON.parse(JSON.stringify(_self._mergeRecordModel.getMergeFailRecords())),
             _mergeErrorRecordsWithInChargeDetail = _self.appendInChargeDetail(_mergeErrorRecords),
-            _mergeErrorMsg = MessageBuilderUtil.getMergeFailMsg(_mergeErrorRecordsWithInChargeDetail),
+            _allFrontendTG = _self._telegramModel.getAllFrontendTG(),
+            _mergeErrorMsg = MessageBuilderUtil.getMergeFailMsg(_mergeErrorRecordsWithInChargeDetail, _allFrontendTG),
             _frontendGroupTG = _self._telegramModel.getFrontendGroupTG();
 
         if(_mergeErrorRecords.length <= 0) return;
