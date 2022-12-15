@@ -9,7 +9,7 @@ class MessageBuilder{
         for (let $i = 0; $i < $errorStack.length; $i++) {
             const _error = $errorStack[$i];
             _msg += `\u{1F4A5} <b>${_error['from']}</b> ----> <b>${_error['to']}</b> `;
-            appendInChargeToMsg(_msg, _error, $allFrontendTG);
+            _msg = appendInChargeToMsg(_msg, _error, $allFrontendTG);
             _msg += '\n';
         }
         _msg += `\n=====================\n${_datetime}`
@@ -30,6 +30,7 @@ class MessageBuilder{
                     $msg += `<a href="tg://user?id=${_inChargeChatId}">@${_inChargeCode}</a> `
                 }
             }
+            return $msg;
         }
     }
 }
