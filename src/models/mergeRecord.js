@@ -1,34 +1,37 @@
 const appRoot = require('app-root-path');
 require('dotenv').config({ path: `${appRoot}/.env` });
+const CmsService = require(`${appRoot}/src/services/cms`);
 
 class MergeRecordModel{
-    _mergeFailRecords
-    _mergeSuccessRecords
+    _mergeFailRecordsForThisTime
+    _mergeSuccessRecordsForThisTime
+    _cms
 
     constructor(){
         let _self = this;
-        _self._mergeFailRecords = [];
-        _self._mergeSuccessRecords = [];
+        _self._mergeFailRecordsForThisTime = [];
+        _self._mergeSuccessRecordsForThisTime = [];
+        _self._cms = new CmsService();
     }
 
-    getMergeSuccessRecords(){
+    getMergeSuccessRecordsForThisTime(){
         let _self = this;
-        return _self._mergeSuccessRecords;
+        return _self._mergeSuccessRecordsForThisTime;
     }
 
-    getMergeFailRecords(){
+    getMergeFailRecordsForThisTime(){
         let _self = this;
-        return _self._mergeFailRecords;
+        return _self._mergeFailRecordsForThisTime;
     }
 
-    addMergeSuccessRecord($newRecord){
+    addMergeSuccessRecordForThisTime($newRecord){
         let _self = this;
-        _self._mergeSuccessRecords.push($newRecord);
+        _self._mergeSuccessRecordsForThisTime.push($newRecord);
     }
 
-    addMergeFailRecord($newRecord){
+    addMergeFailRecordForThisTime($newRecord){
         let _self = this;
-        _self._mergeFailRecords.push($newRecord);
+        _self._mergeFailRecordsForThisTime.push($newRecord);
     }
 }
 

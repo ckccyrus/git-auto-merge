@@ -1,11 +1,6 @@
 const appRoot = require('app-root-path');
 const axios = require('axios');
 var querystring = require('querystring');
-// const TELEGRAM_TABLE = require(`${appRoot}/data/telegramTable.json`)
-const TELEGRAM_TABLE = {
-    "214": "1433671879",
-    "166": "999999999"
-}
 
 class CmsService{
     _telegramTable;
@@ -19,12 +14,12 @@ class CmsService{
         'SEND_MERGE_SUCCESS_SUFFIX': '/api/autoMergeMergeSuccess',
         'SEND_MERGE_FAIL_SUFFIX': '/api/autoMergeMergeFail',
         'GET_TELEGRAM_TABLE_SUFFIX': '/api/autoMergeGetAllTelegrams',
+        'GET_ALL_MERGE_FAIL_RECORDS_SUFFIX': '/api/autoMergeGetAllMergeFailRecords'
         // 'SAVE_MERGE_FAIL_RECORDS': '/api/autoMergeSaveMergeFailRecords'
     }
 
     constructor(){
         let _self = this;
-        _self._telegramTable = TELEGRAM_TABLE;
         if(!_self._CONFIG.CMS_URL) throw new Error('process.env.CMS_HOST is undefined!');
     }
 
@@ -78,7 +73,6 @@ class CmsService{
             },
             _headers = { 'content-type': 'application/x-www-form-urlencoded' },
             _result = await axios.post(_url, querystring.stringify(_data), {_headers});
-        console.log("DEBUG: [CMS] _data: ", _data);
     }
 
     async getTelegramTable(){
@@ -96,6 +90,13 @@ class CmsService{
     }
 
     async updateBranchStatus(){}
+
+    async getAllMergeFailRecords(){
+        let _self = this,
+            _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.GET_ALL_MERGE_FAIL_RECORDS_SUFFIX}`,
+            _result = await axios.get(_url);
+        return _result.data.allMergeFailRecords;
+    }
 }
 
 module.exports = CmsService;
