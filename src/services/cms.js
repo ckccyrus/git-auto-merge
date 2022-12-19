@@ -78,6 +78,7 @@ class CmsService{
             },
             _headers = { 'content-type': 'application/x-www-form-urlencoded' },
             _result = await axios.post(_url, querystring.stringify(_data), {_headers});
+        console.log("DEBUG: [CMS] _data: ", _data);
     }
 
     async getTelegramTable(){
