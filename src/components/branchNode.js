@@ -147,36 +147,36 @@ class BranchNode {
 
         _mergeResultObj = await _workspace.merge(_sourceBranchName, _destinationBranchName);
         _isMergeSuccess = _mergeResultObj.success;
-        _mergeResult = _mergeResultObj.result;
 
         _workspaceManager.releaseWorkspace(_workspace);
 
         if(_isMergeSuccess) {
-            await _self.dispatchMergeSuccessEvent(_parentBranchName, _destinationBranchName, _mergeResult);
+            await _self.dispatchMergeSuccessEvent(_parentBranchName, _destinationBranchName, _mergeResultObj);
         }else{
-            await _self.dispatchMergeFailEvent(_parentBranchName, _destinationBranchName, _mergeResult);
+            await _self.dispatchMergeFailEvent(_parentBranchName, _destinationBranchName, _mergeResultObj);
         }
 
         return _isMergeSuccess;
     }
 
-    async dispatchMergeFailEvent($parentBranch, $destinationBranch, $result){
-        let _self = this;
+    async dispatchMergeFailEvent($parentBranch, $destinationBranch, $resultObj){
+        let _self = this
         await _self._event.dispatch('branchNodeEvent', {
             eventType: 'mergeFail',
             from: $parentBranch,
             to: $destinationBranch,
-            result: $result
+            result: $resultObj.result,
+            fromCommitMsg: $resultObj.sourceBranchCommitMsg
         })
     }
 
-    async dispatchMergeSuccessEvent($parentBranch, $destinationBranch, $result){
+    async dispatchMergeSuccessEvent($parentBranch, $destinationBranch, $resultObj){
         let _self = this;
         await _self._event.dispatch('branchNodeEvent', {
             eventType: 'mergeSuccess',
             from: $parentBranch,
             to: $destinationBranch,
-            result: $result
+            result: $resultObj.result
         });
     }
 
