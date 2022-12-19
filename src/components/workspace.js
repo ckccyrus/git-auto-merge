@@ -82,11 +82,11 @@ class Workspace{
         shelljs.exec(`git pull`);
 
         console.log(`Source Branch Author`);
-        _returnObj.sourceBranchAuthor = shelljs.exec(`git log -1 --pretty=format:'%an'`).stdout;
+        _returnObj.sourceBranchAuthor = shelljs.exec(`git log -1 ${$sourceBranch} --pretty=format:'%an'`).stdout;
         console.log(`\n`);
 
         console.log(`Source Branch Commit Hash`);
-        _returnObj.sourceBranchCommitHash = shelljs.exec(`git log -n 1 --pretty=format:'%H'`).stdout;
+        _returnObj.sourceBranchCommitHash = shelljs.exec(`git log -n 1 ${$sourceBranch} --pretty=format:'%H'`).stdout;
         console.log(`\n`);
 
         console.log(`Source Branch Commit Message`);
