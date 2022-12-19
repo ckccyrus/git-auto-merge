@@ -82,21 +82,21 @@ class Workspace{
         shelljs.exec(`git pull`);
 
         console.log(`Source Branch Author`);
-        _returnObj.sourceBranchAuthor = shelljs.exec(`git log -1 --pretty=format:'%an'`).stdout;
+        _returnObj.sourceBranchAuthor = shelljs.exec(`git log -1 --pretty=format:'%an'`);
         console.log(`\n`);
 
         console.log(`Source Branch Commit Hash`);
-        _returnObj.sourceBranchCommitHash = shelljs.exec(`git log -n 1 --pretty=format:'%H'`).stdout;
+        _returnObj.sourceBranchCommitHash = shelljs.exec(`git log -n 1 --pretty=format:'%H'`);
         console.log(`\n`);
 
         console.log(`Source Branch Commit Message`);
-        _returnObj.sourceBranchCommitMsg = shelljs.exec(`git log --oneline --pretty=format:'(%an) %s' --no-merges --max-count=1 ${_returnObj.sourceBranchCommitHash}`).stdout;
+        _returnObj.sourceBranchCommitMsg = shelljs.exec(`git log --oneline --pretty=format:'(%an) %s' --no-merges --max-count=1 ${_returnObj.sourceBranchCommitHash}`);
         console.log(`\n`);
         console.log(`==================================================`);
 
 
         try{
-            let _result = shelljs.exec(`git merge origin/${$sourceBranch} -m "[ci-skip] Auto merge branch ${$sourceBranch} into ${$destinationBranch}"`).stdout,
+            let _result = shelljs.exec(`git merge origin/${$sourceBranch} -m "[ci-skip] Auto merge branch ${$sourceBranch} into ${$destinationBranch}"`),
                 _status = _result.code,
                 _isSuccess = _status == 0;
 
