@@ -58,7 +58,10 @@ class Workspace{
         let _self = this,
             _returnObj = {
                 success: false,
-                result: undefined
+                result: undefined,
+                sourceBranchAuthor: undefined,
+                sourceBranchCommitMsg: undefined,
+                sourceBranchCommitHash: undefined
             },
             _isSourceBranchValid = await _self.isValidRemoteBranch($sourceBranch),
             _isDestinationBranchValid = await _self.isValidRemoteBranch($destinationBranch);
@@ -69,6 +72,7 @@ class Workspace{
         console.log(`[Workspace] Merging <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}... `);
 
         console.log(`==================================================`);
+        console.log(`Fetch and Pull Merge Branches`);
         shelljs.cd(_self._directory+'/'+_self._folderName);
         shelljs.exec(`git checkout ${$sourceBranch} --`);
         shelljs.exec(`git fetch`);
@@ -76,10 +80,19 @@ class Workspace{
         shelljs.exec(`git checkout ${$destinationBranch} --`);
         shelljs.exec(`git fetch`);
         shelljs.exec(`git pull`);
+
+        console.log(`Source Branch Author`);
+        _returnObj.sourceBranchAuthor = shelljs.exec(`git log -1 --pretty=format:'%an'`);
+
+        console.log(`Source Branch Commit Hash`);
+        _returnObj.sourceBranchCommitHash = shelljs.exec(`git log -n 1 --pretty=format:'%H'`);
+
+        console.log(`Source Branch Commit Message`);
+        _returnObj.sourceBranchCommitMsg = shelljs.exec(`git log --oneline --pretty=format:'(%an) %s' --no-merges --max-count=1 ${_returnObj.sourceBranchCommitHash}`);
         console.log(`==================================================`);
 
-        try{
 
+        try{
             let _result = shelljs.exec(`git merge origin/${$sourceBranch} -m "[ci-skip] Auto merge branch ${$sourceBranch} into ${$destinationBranch}"`),
                 _status = _result.code,
                 _isSuccess = _status == 0;
