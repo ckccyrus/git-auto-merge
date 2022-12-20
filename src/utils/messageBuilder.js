@@ -41,7 +41,7 @@ class MessageBuilder{
         for (let $i = 0; $i < $mergeErrors.length; $i++) {
             const _error = $mergeErrors[$i];
             _msg += `\u{1F4A5} <b>${_error['mParentBranch']}</b> ----> <b>${_error['mBranchName']}</b>\n\n`;
-            // _msg += `<b>Commit: </b>${_error['mMergeFailCommitMsg']}\n\n`
+            _msg += `<b>Commit: </b>${_error['mMergeFailCommitMsg']}\n\n`
             _msg += `<b>In Charge: </b>`
             _msg = appendInChargeToMsg(_msg, _error, $allFrontendTG);
             _msg += '\n————————————';
