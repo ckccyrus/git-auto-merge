@@ -1,11 +1,12 @@
 const appRoot = require('app-root-path');
+require('dotenv').config({ path: `${appRoot}/.env` });
 
 class TelegramModel{
     _cmsService;
     _telegramTable;
 
     _CONFIG={
-        "FRONTEND_GROUP_TG_KEY": "Frontend-Auto-Merge-Error"
+        "FRONTEND_GROUP_TG_KEY": process.env.FRONTEND_GROUP_TG_KEY || "Frontend-Auto-Merge-Error"
     }
 
     constructor(){

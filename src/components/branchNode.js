@@ -1,7 +1,7 @@
 const appRoot = require('app-root-path');
 const CmsService = require(`${appRoot}/src/services/cms`);
 const MessageBuilderUtil = require(`${appRoot}/src/utils/messageBuilder`);
-const Event = require(`${appRoot}/src/modules/event`);
+const Event = require(`${appRoot}/src/tools/event`);
 const WorkspaceManager = require(`${appRoot}/src/managers/workspaceManager`);
 
 class BranchNode {
