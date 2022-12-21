@@ -14,8 +14,9 @@ class CmsService{
         'SEND_MERGE_SUCCESS_SUFFIX': '/api/autoMergeMergeSuccess',
         'SEND_MERGE_FAIL_SUFFIX': '/api/autoMergeMergeFail',
         'GET_TELEGRAM_TABLE_SUFFIX': '/api/autoMergeGetAllTelegrams',
-        'GET_ALL_MERGE_FAIL_RECORDS_SUFFIX': '/api/autoMergeGetAllMergeFailRecords'
-        // 'SAVE_MERGE_FAIL_RECORDS': '/api/autoMergeSaveMergeFailRecords'
+        'GET_ALL_MERGE_FAIL_RECORDS_SUFFIX': '/api/autoMergeGetAllMergeFailRecords',
+        'SEND_MERGE_ERROR_MESSAGE': '/api/autoMergeSendErrorMessage',
+        'CLEAR_MERGE_ERROR_MESSAGE': '/api/autoMergeClearErrorMessage'
     }
 
     constructor(){
@@ -34,6 +35,36 @@ class CmsService{
             _headers = { 'content-type': 'application/x-www-form-urlencoded' },
             _result = await axios.post(_url, querystring.stringify(_data), {_headers});
         console.log(`[CMS] Sent message to ${$targetTgId} with message ${$message}`);
+        return _result;
+    }
+
+    async sendMergeErrorMessage($targetTgId, $message){
+        console.log(`[CMS] sending merge error message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
+        let _self = this,
+            _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MERGE_ERROR_MESSAGE}`,
+            _data = {
+                "token": _self._CONFIG.ACCESS_TOKEN,
+                "chat_id": $targetTgId,
+                "message": $message 
+            },
+            _headers = { 'content-type': 'application/x-www-form-urlencoded' },
+            _result = await axios.post(_url, querystring.stringify(_data), {_headers});
+        console.log(`[CMS] Sent message to ${$targetTgId} with message ${$message}`);
+        return _result;
+    }
+
+    async clearMergeErrorMessage($targetTgId){
+        console.log(`[CMS] Clearing merge error message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
+        let _self = this,
+            _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.CLEAR_MERGE_ERROR_MESSAGE}`,
+            _data = {
+                "token": _self._CONFIG.ACCESS_TOKEN,
+                "chat_id": $targetTgId,
+            },
+            _headers = { 'content-type': 'application/x-www-form-urlencoded' },
+            _result = await axios.post(_url, querystring.stringify(_data), {_headers});
+        console.log(`[CMS] Cleared message to ${$targetTgId}`);
+        return _result;
     }
 
     async sendMergeStart($rootBranch){

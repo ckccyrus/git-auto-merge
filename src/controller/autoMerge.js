@@ -118,17 +118,42 @@ class AutoMergeController{
         Messenger.openClose('/TREE PROPAGATE');
     }
 
-    async sendAllMergeErrorMessage(){
+    // async sendAllMergeErrorMessage(){
+    //     let _self = this,
+    //         // _allMergeErrors = _self._mergeRecordModel.getAllMergeFailRecords(),
+    //         _allMergeErrors = await _self._cmsService.getAllMergeFailRecords(),
+    //         _allFrontendTG = _self._telegramModel.getAllFrontendTG(),
+    //         _mergeErrorMsg = MessageBuilderUtil.getMergeFailMsg(_allMergeErrors, _allFrontendTG),
+    //         _frontendGroupTG = _self._telegramModel.getFrontendGroupTG();
+
+    //     console.log("Merge Error Message: ", _mergeErrorMsg, _allMergeErrors.length);
+    //     if(_allMergeErrors.length <= 0) return;
+    //     let _sendMsgResult = await _self._cmsService.sendMessage(_frontendGroupTG, _mergeErrorMsg),
+    //         _isSendSuccess = _sendMsgResult && _sendMsgResult.ok == true,
+    //         _messageId = _isSendSuccess && _sendMsgResult.result.message_id;
+    // }
+
+    async handleMergeMessage(){
         let _self = this,
-            // _allMergeErrors = _self._mergeRecordModel.getAllMergeFailRecords(),
             _allMergeErrors = await _self._cmsService.getAllMergeFailRecords(),
             _allFrontendTG = _self._telegramModel.getAllFrontendTG(),
             _mergeErrorMsg = MessageBuilderUtil.getMergeFailMsg(_allMergeErrors, _allFrontendTG),
-            _frontendGroupTG = _self._telegramModel.getFrontendGroupTG();
+            _frontendGroupTG = _self._telegramModel.getFrontendGroupTG(),
+            _hasMergeError = _allMergeErrors.length > 0;
 
-        console.log("Merge Error Message: ", _mergeErrorMsg, _allMergeErrors.length);
-        if(_allMergeErrors.length <= 0) return;
-        await _self._cmsService.sendMessage(_frontendGroupTG, _mergeErrorMsg);
+        if(_hasMergeError){
+            await _self._cmsService.sendMergeErrorMessage(_frontendGroupTG, _mergeErrorMsg);
+        }else{
+            await _self._cmsService.clearMergeErrorMessage(_frontendGroupTG);
+        }
+
+        // console.log("Merge Error Message: ", _mergeErrorMsg, _allMergeErrors.length);
+        // if(_allMergeErrors.length <= 0) return;
+        // let _sendMsgResult = await _self._cmsService.sendMessage(_frontendGroupTG, _mergeErrorMsg),
+        //     _isSendSuccess = _sendMsgResult && _sendMsgResult.ok == true,
+        //     _messageId = _isSendSuccess && _sendMsgResult.result.message_id;
+        // function sendMergeErrorMessage(){}
+        // function clearMergeErrorMessage(){}
     }
 
     async sendMergeSuccess($evt){
@@ -154,7 +179,8 @@ class AutoMergeController{
     async postMergeAction(){
         Messenger.openClose('POST MERGE ACTION');
         let _self = this;
-        await _self.sendAllMergeErrorMessage();
+        // await _self.sendAllMergeErrorMessage();
+        await _self.handleMergeMessage();
         let _mergeSuccessRecordsForThisTime = _self._mergeRecordModel.getMergeSuccessRecordsForThisTime(),
             _mergeFailRecordsForThisTime = _self._mergeRecordModel.getMergeFailRecordsForThisTime();
         
