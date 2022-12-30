@@ -9,16 +9,16 @@ const CmsService = require(`${appRoot}/src/services/cms`);
 const MessageBuilderUtil = require(`${appRoot}/src/utils/messageBuilder`);
 const MergeRecordModel = require(`${appRoot}/src/models/mergeRecord`);
 
-class AutoMergeController{
+class AutoMergeController {
     _branchTree;
     _branchModel;
     _telegramModel;
     _cmsService;
     _mergeRecordModel;
 
-    constructor(){}
+    constructor() { }
 
-    async init(){
+    async init() {
         let _self = this;
         _self.initCmsService();
         await _self.initBranchModel();
@@ -28,33 +28,33 @@ class AutoMergeController{
         _self.initMergeRecordModel();
     }
 
-    initCmsService(){
+    initCmsService() {
         Messenger.openClose('CMS SERVICE CREATE');
         let _self = this;
         _self._cmsService = new CmsService();
         Messenger.openClose('/CMS SERVICE CREATE');
     }
 
-    async initBranchModel(){
+    async initBranchModel() {
         let _self = this;
         _self._branchModel = new BranchModel();
         let _branchTable = await _self._cmsService.getBranchTable();
         _self._branchModel.setBranchTable(_branchTable);
     }
 
-    async initTelegramModel(){
+    async initTelegramModel() {
         let _self = this;
         _self._telegramModel = new TelegramModel();
         let _telegramModel = await _self._cmsService.getTelegramTable();
         _self._telegramModel.setTelegramTable(_telegramModel);
     }
 
-    initMergeRecordModel(){
+    initMergeRecordModel() {
         let _self = this;
         _self._mergeRecordModel = new MergeRecordModel();
     }
 
-    initBranchTree(){
+    initBranchTree() {
         Messenger.openClose('TREE CREATION');
         let _self = this,
             _branchTable = _self._branchModel.getBranchTable(),
@@ -64,38 +64,39 @@ class AutoMergeController{
         Messenger.openClose('/TREE CREATION');
     }
 
-    async initWorkspaceManager(){
+    async initWorkspaceManager() {
         Messenger.openClose('WORKSPACE INIT PRIMARY WORKSPACE');
-        try{
+        try {
             await WorkspaceManager.getInstance().initPrimaryWorkspace();
-        }catch($err){
-            console.log("ERROR: initWorkspaceManager error: ", initWorkspaceManager);
+        } catch ($err) {
+            //console.log("ERROR: initWorkspaceManager error: ", initWorkspaceManager);
+            console.log("ERROR: initWorkspaceManager error: ", $err);
         }
         Messenger.openClose('/WORKSPACE INIT PRIMARY WORKSPACE');
     }
 
-    async onBranchTreeEvent($evt){
+    async onBranchTreeEvent($evt) {
         let _self = this,
             _eventType = $evt.eventType;
-        switch(_eventType){
-            case('mergeSuccess'): await _self.mergeSuccessHandler($evt); break;
-            case('mergeFail'): await _self.mergeFailHandler($evt); break;
+        switch (_eventType) {
+            case ('mergeSuccess'): await _self.mergeSuccessHandler($evt); break;
+            case ('mergeFail'): await _self.mergeFailHandler($evt); break;
         }
     }
 
-    async mergeSuccessHandler($evt){
+    async mergeSuccessHandler($evt) {
         let _self = this;
         _self._mergeRecordModel.addMergeSuccessRecordForThisTime($evt);
         await _self.sendMergeSuccess($evt);
     }
-    
-    async mergeFailHandler($evt){
+
+    async mergeFailHandler($evt) {
         let _self = this;
         _self._mergeRecordModel.addMergeFailRecordForThisTime($evt);
         await _self.sendMergeFail($evt);
     }
 
-    appendInChargeDetail($errorStack){
+    appendInChargeDetail($errorStack) {
         let _self = this,
             _errorStack = JSON.parse(JSON.stringify($errorStack));
         for (let $i = 0; $i < _errorStack.length; $i++) {
@@ -109,7 +110,7 @@ class AutoMergeController{
         return _errorStack;
     }
 
-    async startMerge(){
+    async startMerge() {
         let _self = this;
         Messenger.openClose('TREE PROPAGATE');
         // TODO: update cms branch table to all pending, last trigger time
@@ -133,7 +134,7 @@ class AutoMergeController{
     //         _messageId = _isSendSuccess && _sendMsgResult.result.message_id;
     // }
 
-    async handleMergeMessage(){
+    async handleMergeMessage() {
         let _self = this,
             _allMergeErrors = await _self._cmsService.getAllMergeFailRecords(),
             _allFrontendTG = _self._telegramModel.getAllFrontendTG(),
@@ -141,9 +142,9 @@ class AutoMergeController{
             _frontendGroupTG = _self._telegramModel.getFrontendGroupTG(),
             _hasMergeError = _allMergeErrors.length > 0;
 
-        if(_hasMergeError){
+        if (_hasMergeError) {
             await _self._cmsService.sendMergeErrorMessage(_frontendGroupTG, _mergeErrorMsg);
-        }else{
+        } else {
             await _self._cmsService.clearMergeErrorMessage(_frontendGroupTG);
         }
 
@@ -156,17 +157,17 @@ class AutoMergeController{
         // function clearMergeErrorMessage(){}
     }
 
-    async sendMergeSuccess($evt){
+    async sendMergeSuccess($evt) {
         let _self = this;
         await _self._cmsService.sendMergeSuccess($evt);
     }
 
-    async sendMergeFail($evt){
+    async sendMergeFail($evt) {
         let _self = this;
         await _self._cmsService.sendMergeFail($evt);
     }
 
-    async sendMergeStart(){
+    async sendMergeStart() {
         let _self = this,
             _rootBranch = _self._branchModel.getRootBranch();
         await _self._cmsService.sendMergeStart(_rootBranch);
@@ -176,14 +177,14 @@ class AutoMergeController{
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async postMergeAction(){
+    async postMergeAction() {
         Messenger.openClose('POST MERGE ACTION');
         let _self = this;
         // await _self.sendAllMergeErrorMessage();
         await _self.handleMergeMessage();
         let _mergeSuccessRecordsForThisTime = _self._mergeRecordModel.getMergeSuccessRecordsForThisTime(),
             _mergeFailRecordsForThisTime = _self._mergeRecordModel.getMergeFailRecordsForThisTime();
-        
+
         console.log('Success (Only for this time):', _mergeSuccessRecordsForThisTime);
         console.log('Fail: (Only for this time):', _mergeFailRecordsForThisTime);
         Messenger.openClose('/POST MERGE ACTION');
