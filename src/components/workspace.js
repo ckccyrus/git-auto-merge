@@ -101,10 +101,6 @@ class Workspace{
                 _isSuccess = _status == 0;
 
             if(!_isSuccess) throw new Error(_result.stdout);
-            // console.log("[Workspace] merge result: ");
-            // console.log(`==================================================`);
-            // console.log(_result);
-            // console.log(`==================================================`);
             _returnObj.success = true;
             _returnObj.result = _result;
             shelljs.exec(`git push origin ${$destinationBranch}`);

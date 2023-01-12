@@ -30,6 +30,7 @@ class WorkspaceManager{
         _self.removeWorkspaces();
     }
 
+    //---------------Singleton---------------
     static getInstance(){
         let _self = this;
         if(!_self._instance){
@@ -127,8 +128,8 @@ class WorkspaceManager{
         }
 
         async function removeAllLocalBranches($allLocalBranchArr){
-            for (let i = 0; i < _allLocalBranchesExcludeMasterArr.length; i++) {
-                const _branch = _allLocalBranchesExcludeMasterArr[i];
+            for (let i = 0; i < $allLocalBranchArr.length; i++) {
+                const _branch = $allLocalBranchArr[i];
                 console.log(`[WorkspaceManager] Deleting local branch ${_branch}...`);
                 await _self._git.raw('branch', '-D', _branch);
                 console.log(`[WorkspaceManager] Branch ${_branch} is deleted`);

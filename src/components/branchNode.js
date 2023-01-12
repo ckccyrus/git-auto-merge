@@ -12,7 +12,7 @@ class BranchNode {
     _branchData;
     _branchName;
     _parentNode;
-    _status;       // PENDING || SUCCESS || FAIL
+    _status;
     _workspaceManager;
     _childrenNodes;
     _childrenDataArr;
