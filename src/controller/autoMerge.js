@@ -71,6 +71,7 @@ class AutoMergeController {
         } catch ($err) {
             //console.log("ERROR: initWorkspaceManager error: ", initWorkspaceManager);
             console.log("ERROR: initWorkspaceManager error: ", $err);
+            throw Error($err);
         }
         Messenger.openClose('/WORKSPACE INIT PRIMARY WORKSPACE');
     }
