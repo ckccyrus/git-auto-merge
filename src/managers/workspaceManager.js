@@ -61,14 +61,21 @@ class WorkspaceManager{
 
     async removeWorkspaces(){
         let _self = this,
-            _allWorkspaceFolderNames = await getAllWorkspaceFolderName();
+            _isWorkspaceRootExists = fs.existsSync(_self._CONFIG.WORKSPACE_ROOT_DIR);
+
+        if(!_isWorkspaceRootExists) return;
+
+        let _allWorkspaceFolderNames = await getAllWorkspaceFolderName();
         
         for (let i = 0; i < _allWorkspaceFolderNames.length; i++) {
             let _workspaceFolderName = _allWorkspaceFolderNames[i],
-                _workspaceDirectory = `${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_workspaceFolderName}`;
-            console.log(`[WorkspaceManager] removing ${_workspaceFolderName}...`);
-            await fs.promises.rm(_workspaceDirectory, { recursive: true, force: true })
-            console.log(`[WorkspaceManager] ${_workspaceFolderName} is removed`);
+                _workspaceDirectory = `${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_workspaceFolderName}`,
+                _isWorkspaceDirectoryExist = fs.existsSync(_workspaceDirectory);
+            if(_isWorkspaceDirectoryExist){
+                console.log(`[WorkspaceManager] removing ${_workspaceFolderName}...`);
+                await fs.promises.rm(_workspaceDirectory, { recursive: true, force: true })
+                console.log(`[WorkspaceManager] ${_workspaceFolderName} is removed`);
+            }
         }
 
         async function getAllWorkspaceFolderName(){
