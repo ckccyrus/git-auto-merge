@@ -9,14 +9,14 @@ class CmsService{
         'CMS_URL': process.env.CMS_HOST || '',
         'ACCESS_TOKEN': 'a223824d1256db55c5f6f3e2d3303043', //Pimcore user access token
         'SEND_MESSAGE_API_SUFFIX': '/api/SendMessage',
-        'GET_BRANCH_TABLE_SUFFIX': '/api/autoMergeList',
-        'SEND_MERGE_START_SUFFIX': '/api/autoMergeMergeStart',
-        'SEND_MERGE_SUCCESS_SUFFIX': '/api/autoMergeMergeSuccess',
-        'SEND_MERGE_FAIL_SUFFIX': '/api/autoMergeMergeFail',
-        'GET_TELEGRAM_TABLE_SUFFIX': '/api/autoMergeGetAllTelegrams',
-        'GET_ALL_MERGE_FAIL_RECORDS_SUFFIX': '/api/autoMergeGetAllMergeFailRecords',
-        'SEND_MERGE_ERROR_MESSAGE': '/api/autoMergeSendErrorMessage',
-        'CLEAR_MERGE_ERROR_MESSAGE': '/api/autoMergeClearErrorMessage'
+        'GET_BRANCH_TABLE_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeList' : '/api/autoMergeList',
+        'SEND_MERGE_START_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeMergeStart' : '/api/autoMergeMergeStart',
+        'SEND_MERGE_SUCCESS_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeMergeSuccess' : '/api/autoMergeMergeSuccess',
+        'SEND_MERGE_FAIL_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeMergeFail' : '/api/autoMergeMergeFail',
+        'GET_TELEGRAM_TABLE_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeGetAllTelegrams' : '/api/autoMergeGetAllTelegrams',
+        'GET_ALL_MERGE_FAIL_RECORDS_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeGetAllMergeFailRecords' : '/api/autoMergeGetAllMergeFailRecords',
+        'SEND_MERGE_ERROR_MESSAGE': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeSendErrorMessage' : '/api/autoMergeSendErrorMessage',
+        'CLEAR_MERGE_ERROR_MESSAGE': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeClearErrorMessage' : '/api/autoMergeClearErrorMessage'
     }
 
     constructor(){
