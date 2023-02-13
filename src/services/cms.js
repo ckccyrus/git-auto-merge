@@ -28,8 +28,9 @@ class CmsService{
         console.log(`[CMS] sending message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MESSAGE_API_SUFFIX}`,
+            _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
             _data = {
-                "chat_id": $targetTgId,
+                "chat_id": _chatId,
                 "message": $message 
             },
             _headers = { 'content-type': 'application/x-www-form-urlencoded' },
@@ -42,9 +43,10 @@ class CmsService{
         console.log(`[CMS] sending merge error message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MERGE_ERROR_MESSAGE}`,
+            _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
             _data = {
                 "token": _self._CONFIG.ACCESS_TOKEN,
-                "chat_id": $targetTgId,
+                "chat_id": _chatId,
                 "message": $message 
             },
             _headers = { 'content-type': 'application/x-www-form-urlencoded' },
@@ -57,9 +59,10 @@ class CmsService{
         console.log(`[CMS] Clearing merge error message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.CLEAR_MERGE_ERROR_MESSAGE}`,
+            _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
             _data = {
                 "token": _self._CONFIG.ACCESS_TOKEN,
-                "chat_id": $targetTgId,
+                "chat_id": _chatId,
             },
             _headers = { 'content-type': 'application/x-www-form-urlencoded' },
             _result = await axios.post(_url, querystring.stringify(_data), {_headers});
