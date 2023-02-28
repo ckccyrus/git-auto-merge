@@ -28,7 +28,8 @@ class CmsService{
         console.log(`[CMS] sending message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MESSAGE_API_SUFFIX}`,
-            _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
+            // _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
+            _chatId = $targetTgId,
             _data = {
                 "chat_id": _chatId,
                 "message": $message 
@@ -43,7 +44,8 @@ class CmsService{
         console.log(`[CMS] sending merge error message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MERGE_ERROR_MESSAGE}`,
-            _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
+            // _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
+            _chatId = $targetTgId,
             _data = {
                 "token": _self._CONFIG.ACCESS_TOKEN,
                 "chat_id": _chatId,
@@ -59,7 +61,8 @@ class CmsService{
         console.log(`[CMS] Clearing merge error message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.CLEAR_MERGE_ERROR_MESSAGE}`,
-            _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
+            // _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
+            _chatId = $targetTgId,
             _data = {
                 "token": _self._CONFIG.ACCESS_TOKEN,
                 "chat_id": _chatId,
