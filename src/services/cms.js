@@ -7,7 +7,7 @@ class CmsService{
 
     _CONFIG = {
         'CMS_URL': process.env.CMS_HOST || '',
-        'ACCESS_TOKEN': '9b92c5c4b4feddefebd15f7025459f33', //Pimcore user access token
+        'ACCESS_TOKEN': '9dac263396c47824151354d955fe0f0d', //Pimcore user access token
         'SEND_MESSAGE_API_SUFFIX': '/api/SendMessage',
         'GET_BRANCH_TABLE_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeList' : '/api/autoMergeList',
         'SEND_MERGE_START_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeMergeStart' : '/api/autoMergeMergeStart',
