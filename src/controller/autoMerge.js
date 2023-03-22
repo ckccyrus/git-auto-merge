@@ -1,4 +1,5 @@
 const appRoot = require('app-root-path');
+const fs = require('fs');
 require('dotenv').config({ path: `${appRoot}/.env` });
 const Messenger = require(`${appRoot}/src/utils/messenger`);
 const BranchTree = require(`${appRoot}/src/components/branchTree`);
