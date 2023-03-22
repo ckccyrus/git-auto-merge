@@ -36,6 +36,7 @@ class BranchNode {
         _self._inCharge = _self._isValidNode && JSON.parse(_self._branchData['mInCharge']) || null;
         _self._parentNode = _self._isValidNode && _self._branchData['mParentBranch'] || null;
         _self._status = _self._isValidNode && _self._branchData['mStatus'] || null;
+        _self._QAStatus = _self._isValidNode && _self._branchData['mQAStatus'] || null;
         _self.printBranchNodeCreatedMessage();
 
     }
@@ -140,18 +141,20 @@ class BranchNode {
             _isMergeSuccess = false,
             _curBranchName = _self._branchName,
             _parentBranchName = _self._parentNode,
+            _QAStatus = _self._QAStatus,
             _sourceBranchName = _parentBranchName,
             _destinationBranchName = _curBranchName,
             _workspaceManager = _self._workspaceManager,
             _workspace = await _workspaceManager.getIdleWorkspace();
 
-        _mergeResultObj = await _workspace.merge(_sourceBranchName, _destinationBranchName);
+        _mergeResultObj = await _workspace.merge(_sourceBranchName, _destinationBranchName, _QAStatus);
         _isMergeSuccess = _mergeResultObj.success;
 
         _workspaceManager.releaseWorkspace(_workspace);
 
         if(_isMergeSuccess) {
             await _self.dispatchMergeSuccessEvent(_parentBranchName, _destinationBranchName, _mergeResultObj);
+            await _self.dispatchUpdatePreviewEvent(_parentBranchName, _destinationBranchName, _mergeResultObj);
         }else{
             await _self.dispatchMergeFailEvent(_parentBranchName, _destinationBranchName, _mergeResultObj);
         }
@@ -177,6 +180,16 @@ class BranchNode {
             from: $parentBranch,
             to: $destinationBranch,
             result: $resultObj.result
+        });
+    }
+
+    async dispatchUpdatePreviewEvent($parentBranch, $destinationBranch, $resultObj){
+        let _self = this;
+        await _self._event.dispatch('branchNodeEvent', {
+            eventType: 'updatePreview',
+            from: $parentBranch,
+            to: $destinationBranch,
+            result: $resultObj,
         });
     }
 

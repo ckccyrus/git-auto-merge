@@ -47,7 +47,7 @@ class Workspace{
         }
     }
 
-    async merge($sourceBranch, $destinationBranch){
+    async merge($sourceBranch, $destinationBranch, $QAStatus){
         // Merge process:  
         // 1. set idle = false for this instance
         // 2. fetch and pull and push for both $sourceBranch and $destinationBranch (keep latest version)
@@ -64,7 +64,8 @@ class Workspace{
                 sourceBranchCommitHash: undefined
             },
             _isSourceBranchValid = await _self.isValidRemoteBranch($sourceBranch),
-            _isDestinationBranchValid = await _self.isValidRemoteBranch($destinationBranch);
+            _isDestinationBranchValid = await _self.isValidRemoteBranch($destinationBranch),
+            _isNeedPreview = $QAStatus === "waitingForFE" || $QAStatus === "testing";
 
         if(!_isSourceBranchValid) throw new Error(`Remote doesn\'t contains ${$sourceBranch}`);
         if(!_isDestinationBranchValid) throw new Error(`Remote doesn\'t contains ${$destinationBranch}`);
@@ -94,6 +95,9 @@ class Workspace{
         console.log(`\n`);
         console.log(`==================================================`);
 
+        console.log(`==================================================`);
+        console.log(`${$destinationBranch} needs uopdate preview: ${_isNeedPreview}`);
+        console.log(`==================================================`);
 
         try{
             let _result = shelljs.exec(`git merge origin/${$sourceBranch} -m "[ci-skip] Auto merge branch ${$sourceBranch} into ${$destinationBranch}"`),
@@ -103,6 +107,8 @@ class Workspace{
             if(!_isSuccess) throw new Error(_result.stdout);
             _returnObj.success = true;
             _returnObj.result = _result;
+            _returnObj.isNeedPreview = _isNeedPreview;
+            _returnObj.destinationBranchCommitHash = shelljs.exec(`git log -n 1 ${$destinationBranch} --pretty=format:'%H'`).stdout;
             shelljs.exec(`git push origin ${$destinationBranch}`);
         }catch($err){
             console.log(`[Workspace] Fail to merge <${$sourceBranch}> into <${$destinationBranch}>, Reason: ${$err}`);

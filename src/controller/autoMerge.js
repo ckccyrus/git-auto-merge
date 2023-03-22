@@ -8,6 +8,7 @@ const WorkspaceManager = require(`${appRoot}/src/managers/workspaceManager`);
 const CmsService = require(`${appRoot}/src/services/cms`);
 const MessageBuilderUtil = require(`${appRoot}/src/utils/messageBuilder`);
 const MergeRecordModel = require(`${appRoot}/src/models/mergeRecord`);
+const PreviewRecordModel = require(`${appRoot}/src/models/previewRecord`);
 
 class AutoMergeController {
     _branchTree;
@@ -15,6 +16,7 @@ class AutoMergeController {
     _telegramModel;
     _cmsService;
     _mergeRecordModel;
+    _previewRecordModel;
 
     constructor() { }
 
@@ -26,6 +28,7 @@ class AutoMergeController {
         _self.initBranchTree();
         await _self.initWorkspaceManager();
         _self.initMergeRecordModel();
+        _self.initPreviewRecordModel();
     }
 
     initCmsService() {
@@ -52,6 +55,11 @@ class AutoMergeController {
     initMergeRecordModel() {
         let _self = this;
         _self._mergeRecordModel = new MergeRecordModel();
+    }
+
+    initPreviewRecordModel() {
+        let _self = this;
+        _self._previewRecordModel = new PreviewRecordModel();
     }
 
     initBranchTree() {
@@ -81,6 +89,7 @@ class AutoMergeController {
         switch (_eventType) {
             case ('mergeSuccess'): await _self.mergeSuccessHandler($evt); break;
             case ('mergeFail'): await _self.mergeFailHandler($evt); break;
+            case ('updatePreview'): await _self.updatePreviewHandler($evt); break;
         }
     }
 
@@ -96,6 +105,11 @@ class AutoMergeController {
         await _self.sendMergeFail($evt);
     }
 
+    async updatePreviewHandler($evt) {
+        let _self = this;
+        _self._previewRecordModel.addPreviewRecordForThisTime($evt);
+    }
+
     appendInChargeDetail($errorStack) {
         let _self = this,
             _errorStack = JSON.parse(JSON.stringify($errorStack));
@@ -108,6 +122,16 @@ class AutoMergeController {
             _errorObj['inChargeId'] = _inChargeStaffChatIdArr;
         }
         return _errorStack;
+    }
+
+    async clearOldPreviewRecords(){
+        Messenger.openClose('CLEAR OLD PREVIEW RECORD');
+        console.log("Existence of .previewRecords: ", fs.existsSync("../../.previewRecords"));
+
+        if(fs.existsSync("../../.previewRecords")){
+            fs.unlinkSync("../../.previewRecords");
+        }
+        Messenger.openClose('/CLEAR OLD PREVIEW RECORD');
     }
 
     async startMerge() {
@@ -163,6 +187,15 @@ class AutoMergeController {
         console.log('Success (Only for this time):', _mergeSuccessRecordsForThisTime);
         console.log('Fail: (Only for this time):', _mergeFailRecordsForThisTime);
         Messenger.openClose('/POST MERGE ACTION');
+    }
+
+    exportPreviewRecords(){
+        let _self = this,
+            _previewRecordsForThisTime = _self._previewRecordModel.getPreviewRecordsForThisTime();
+
+        fs.writeFileSync("../../.previewRecords", JSON.stringify(_previewRecordsForThisTime), 'utf8', function (err) {
+            if (err) { console.log(err); }
+        });
     }
 }
 

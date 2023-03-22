@@ -8,8 +8,10 @@ async function asyncMain(){
 
     let _autoMergeController = new AutoMergeController();
     await _autoMergeController.init();
+    await _autoMergeController.clearOldPreviewRecords();
     await _autoMergeController.startMerge();
     await _autoMergeController.postMergeAction();
+    await _autoMergeController.exportPreviewRecords();
 
     Messenger.openClose('/MAIN');
 }
