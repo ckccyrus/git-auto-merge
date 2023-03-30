@@ -143,7 +143,7 @@ class BranchNode {
 
         _rootResultObj = await _workspace.getRootPreviewData($rootBranch);
         _workspaceManager.releaseWorkspace(_workspace);
-
+console.log("[getRootPreviewData] _rootResultObj:", _rootResultObj);
         await _self.dispatchUpdateRootPreviewEvent($rootBranch, _rootResultObj);
     }
 
