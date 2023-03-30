@@ -50,7 +50,7 @@ class Workspace{
     async getRootPreviewData($rootBranch) {
         let _self = this,
             _returnObj = {
-                destinationCommitHash: undefined
+                destinationBranchCommitHash: undefined
             },
             _isRootBranchValid = await _self.isValidRemoteBranch($rootBranch);
 
@@ -66,7 +66,7 @@ class Workspace{
         shelljs.exec(`git pull`);
 
         console.log(`Root Branch Commit Hash`);
-        _returnObj.destinationCommitHash = shelljs.exec(`git log -n 1 ${$rootBranch} --pretty=format:'%H'`).stdout;
+        _returnObj.destinationBranchCommitHash = shelljs.exec(`git log -n 1 ${$rootBranch} --pretty=format:'%H'`).stdout;
         console.log(`\n`);
 
         console.log(`==================================================`);
