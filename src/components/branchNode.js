@@ -36,7 +36,6 @@ class BranchNode {
         _self._inCharge = _self._isValidNode && JSON.parse(_self._branchData['mInCharge']) || null;
         _self._parentNode = _self._isValidNode && _self._branchData['mParentBranch'] || null;
         _self._status = _self._isValidNode && _self._branchData['mStatus'] || null;
-        _self._QAStatus = _self._isValidNode && _self._branchData['mQAStatus'] || null;
         _self.printBranchNodeCreatedMessage();
 
     }
@@ -98,6 +97,8 @@ class BranchNode {
         if(_needMerge){
             let _isMergeSuccess = await _self.mergeSchedule();
             _needMergeAndFailed = _isMergeSuccess == false;
+        } else {
+            await _self.getRootPreviewData(_self._branchName);
         }
 
         if(_needMergeAndFailed){
@@ -134,6 +135,18 @@ class BranchNode {
         return false;
     }
 
+    async getRootPreviewData($rootBranch){
+        let _self = this,
+            _rootResultObj,
+            _workspaceManager = _self._workspaceManager,
+            _workspace = await _workspaceManager.getIdleWorkspace();
+
+        _rootResultObj = await _workspace.getRootPreviewData($rootBranch);
+        _workspaceManager.releaseWorkspace(_workspace);
+
+        await _self.dispatchUpdateRootPreviewEvent($rootBranch, _rootResultObj);
+    }
+
     async mergeSchedule(){ // need parent and child branch name to merge
         let _self = this,
             _mergeResult,
@@ -141,13 +154,12 @@ class BranchNode {
             _isMergeSuccess = false,
             _curBranchName = _self._branchName,
             _parentBranchName = _self._parentNode,
-            _QAStatus = _self._QAStatus,
             _sourceBranchName = _parentBranchName,
             _destinationBranchName = _curBranchName,
             _workspaceManager = _self._workspaceManager,
             _workspace = await _workspaceManager.getIdleWorkspace();
 
-        _mergeResultObj = await _workspace.merge(_sourceBranchName, _destinationBranchName, _QAStatus);
+        _mergeResultObj = await _workspace.merge(_sourceBranchName, _destinationBranchName);
         _isMergeSuccess = _mergeResultObj.success;
 
         _workspaceManager.releaseWorkspace(_workspace);
@@ -187,8 +199,16 @@ class BranchNode {
         let _self = this;
         await _self._event.dispatch('branchNodeEvent', {
             eventType: 'updatePreview',
-            from: $parentBranch,
             to: $destinationBranch,
+            result: $resultObj,
+        });
+    }
+
+    async dispatchUpdateRootPreviewEvent($rootBranch, $resultObj){
+        let _self = this;
+        await _self._event.dispatch('branchNodeEvent', {
+            eventType: 'updatePreview',
+            to: $rootBranch,
             result: $resultObj,
         });
     }

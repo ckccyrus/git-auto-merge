@@ -1,5 +1,6 @@
 const appRoot = require('app-root-path');
 const fs = require('fs');
+const path = require("path");
 require('dotenv').config({ path: `${appRoot}/.env` });
 const Messenger = require(`${appRoot}/src/utils/messenger`);
 const BranchTree = require(`${appRoot}/src/components/branchTree`);
@@ -126,11 +127,13 @@ class AutoMergeController {
     }
 
     async clearOldPreviewRecords(){
+        let _self = this,
+            _recordPath = path.join(`${appRoot}`, '.previewRecords');
         Messenger.openClose('CLEAR OLD PREVIEW RECORD');
-        console.log("Existence of .previewRecords: ", fs.existsSync("../../.previewRecords"));
-
-        if(fs.existsSync("../../.previewRecords")){
-            fs.unlinkSync("../../.previewRecords");
+console.log(_recordPath);
+console.log("Existence of .previewRecords: ", fs.existsSync(_recordPath));
+        if(fs.existsSync(_recordPath)){
+            fs.unlinkSync(_recordPath);
         }
         Messenger.openClose('/CLEAR OLD PREVIEW RECORD');
     }
@@ -192,9 +195,13 @@ class AutoMergeController {
 
     exportPreviewRecords(){
         let _self = this,
-            _previewRecordsForThisTime = _self._previewRecordModel.getPreviewRecordsForThisTime();
+            _previewRecordsForThisTime = _self._previewRecordModel.getPreviewRecordsForThisTime(),
+            _recordPath = path.join(`${appRoot}`, '.previewRecords');
 
-        fs.writeFileSync("../../.previewRecords", JSON.stringify(_previewRecordsForThisTime), 'utf8', function (err) {
+        console.log('Preview Record (Only for this time):', _previewRecordsForThisTime);
+        console.log('_recordPath', _recordPath);
+        
+        fs.writeFileSync(_recordPath, JSON.stringify(_previewRecordsForThisTime), 'utf8', function (err) {
             if (err) { console.log(err); }
         });
     }

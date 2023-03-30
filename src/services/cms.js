@@ -9,14 +9,14 @@ class CmsService{
         'CMS_URL': process.env.CMS_HOST || '',
         'ACCESS_TOKEN': '9dac263396c47824151354d955fe0f0d', //Pimcore user access token
         'SEND_MESSAGE_API_SUFFIX': '/api/SendMessage',
-        'GET_BRANCH_TABLE_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeList' : '/api/autoMergeList',
-        'SEND_MERGE_START_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeMergeStart' : '/api/autoMergeMergeStart',
-        'SEND_MERGE_SUCCESS_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeMergeSuccess' : '/api/autoMergeMergeSuccess',
-        'SEND_MERGE_FAIL_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeMergeFail' : '/api/autoMergeMergeFail',
-        'GET_TELEGRAM_TABLE_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeGetAllTelegrams' : '/api/autoMergeGetAllTelegrams',
-        'GET_ALL_MERGE_FAIL_RECORDS_SUFFIX': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeGetAllMergeFailRecords' : '/api/autoMergeGetAllMergeFailRecords',
-        'SEND_MERGE_ERROR_MESSAGE': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeSendErrorMessage' : '/api/autoMergeSendErrorMessage',
-        'CLEAR_MERGE_ERROR_MESSAGE': (process.env.IS_DEVELOPMENT) ? '/api/dev_autoMergeClearErrorMessage' : '/api/autoMergeClearErrorMessage'
+        'GET_BRANCH_TABLE_SUFFIX': '/api/autoMergeList',
+        'SEND_MERGE_START_SUFFIX': '/api/autoMergeMergeStart',
+        'SEND_MERGE_SUCCESS_SUFFIX': '/api/autoMergeMergeSuccess',
+        'SEND_MERGE_FAIL_SUFFIX': '/api/autoMergeMergeFail',
+        'GET_TELEGRAM_TABLE_SUFFIX': '/api/autoMergeGetAllTelegrams',
+        'GET_ALL_MERGE_FAIL_RECORDS_SUFFIX': '/api/autoMergeGetAllMergeFailRecords',
+        'SEND_MERGE_ERROR_MESSAGE': '/api/autoMergeSendErrorMessage',
+        'CLEAR_MERGE_ERROR_MESSAGE': '/api/autoMergeClearErrorMessage'
     }
 
     constructor(){
@@ -28,7 +28,7 @@ class CmsService{
         console.log(`[CMS] sending message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MESSAGE_API_SUFFIX}`,
-            _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
+            _chatId = $targetTgId,
             _data = {
                 "chat_id": _chatId,
                 "message": $message 
@@ -43,7 +43,7 @@ class CmsService{
         console.log(`[CMS] sending merge error message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.SEND_MERGE_ERROR_MESSAGE}`,
-            _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
+            _chatId = $targetTgId,
             _data = {
                 "token": _self._CONFIG.ACCESS_TOKEN,
                 "chat_id": _chatId,
@@ -59,7 +59,7 @@ class CmsService{
         console.log(`[CMS] Clearing merge error message to ${$targetTgId} by ${this._CONFIG.CMS_URL}`);
         let _self = this,
             _url = `${_self._CONFIG.CMS_URL}${_self._CONFIG.CLEAR_MERGE_ERROR_MESSAGE}`,
-            _chatId = (process.env.IS_DEVELOPMENT) ? process.env.DEV_CHAT_ID : $targetTgId,
+            _chatId = $targetTgId,
             _data = {
                 "token": _self._CONFIG.ACCESS_TOKEN,
                 "chat_id": _chatId,

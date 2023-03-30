@@ -18,10 +18,9 @@ class PreviewRecord {
         let _self = this,
             _returnObj = {};
 
-        _returnObj.isNeedPreview = $newRecord.result.isNeedPreview;
-        _returnObj.branchName = $newRecord.to;
-        _returnObj.sourceCommitHash = $newRecord.result.sourceBranchCommitHash;
+        _returnObj.branchName = $newRecord.to;            
         _returnObj.destinationCommitHash = $newRecord.result.destinationBranchCommitHash;
+        _returnObj.destinationPreviewCommitHash = $newRecord.result.destinationBranchPreviewCommitHash;
 
         _self._previewRecordForThisTime.push(_returnObj);
     }
