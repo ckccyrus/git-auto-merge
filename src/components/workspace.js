@@ -50,7 +50,8 @@ class Workspace{
     async getRootPreviewData($rootBranch) {
         let _self = this,
             _returnObj = {
-                destinationBranchCommitHash: undefined
+                destinationBranchCommitHash: undefined,
+                destinationBranchPreviewCommitHash: undefined
             },
             _isRootBranchValid = await _self.isValidRemoteBranch($rootBranch);
 
@@ -68,6 +69,8 @@ class Workspace{
         console.log(`Root Branch Commit Hash`);
         _returnObj.destinationBranchCommitHash = shelljs.exec(`git log -n 1 ${$rootBranch} --pretty=format:'%H'`).stdout;
         console.log(`\n`);
+
+        _returnObj.destinationBranchPreviewCommitHash = _self.getBuildInfoFromWebServer($rootBranch);
 
         console.log(`==================================================`);
 
@@ -144,27 +147,29 @@ class Workspace{
         }
         console.log(`[Workspace] Finished merge <${$sourceBranch}> into <${$destinationBranch}> by ${_self._folderName}`);
         console.log(`[Workspace] Success _isMergeSuccess ${_returnObj}`);        
-        getBuildInfoFromWebServer();
+        _returnObj.destinationBranchPreviewCommitHash = _self.getBuildInfoFromWebServer($destinationBranch);
 
         return _returnObj;
+    }
 
-        function getBuildInfoFromWebServer(){
-            let _trimBranchName = $destinationBranch.replace (/\//g, "_");
-            console.log(`==================================================`);
-            console.log(`Fetch the build commit info from 92 Webserver`);
+    getBuildInfoFromWebServer($branch){
+        let _destinationBranchPreviewCommitHash,
+            _trimBranchName = $branch.replace (/\//g, "_");
+        console.log(`==================================================`);
+        console.log(`Fetch the build commit info from 92 Webserver`);
+        shelljs.exec('pwd');
+        console.log(`Get into 92 Webserver`);
+        shelljs.cd('/Volumes/WebServer/');
+        shelljs.exec('pwd');
+        if(fs.existsSync(_trimBranchName)){
+            console.log(`Get into specific branch folder`);
+            shelljs.cd(_trimBranchName);
             shelljs.exec('pwd');
-            console.log(`Get into 92 Webserver`);
-            shelljs.cd('/Volumes/WebServer/');
-            shelljs.exec('pwd');
-            if(fs.existsSync(_trimBranchName)){
-                console.log(`Get into specific branch folder`);
-                shelljs.cd(_trimBranchName);
-                shelljs.exec('pwd');
 
-                let _destinationBranchPreviewCommitHash = shelljs.exec(`cat .buildCommitInfo`).stdout;
-                _returnObj.destinationBranchPreviewCommitHash = _destinationBranchPreviewCommitHash;
-            }
+            _destinationBranchPreviewCommitHash = shelljs.exec(`cat .buildCommitInfo`).stdout;
         }
+
+        return _destinationBranchPreviewCommitHash;
     }
 
     async isValidRemoteBranch($branch){
