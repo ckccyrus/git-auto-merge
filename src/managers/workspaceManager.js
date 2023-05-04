@@ -125,32 +125,36 @@ class WorkspaceManager{
         _self._git = simpleGit($directory);
         await _self._git.fetch();
         let _allLocalBranchesStr = await _self._git.raw('branch'),
-            _allLocalBranchesExcludeMasterArr = _self.getAllLocalBranchExclMasterArr(_allLocalBranchesStr);
-        await updateMaster();
-        await removeAllLocalBranches(_allLocalBranchesExcludeMasterArr);
+            _allLocalBranchesExcludeProductionArr = _self.getAllLocalBranchExclProductionArr(_allLocalBranchesStr);
+        // await updateMaster();
+        Messenger.print(`All branches: ${_allLocalBranchesStr}`);
+        Messenger.print(`All branches exclude production: ${_allLocalBranchesExcludeProductionArr}`);
 
-        async function updateMaster(){
-            await _self._git.raw('checkout', 'master', '--');
-            await _self._git.raw('pull', 'origin', 'master')
-        }
+        await updateProduction();
+        await removeAllLocalBranches(_allLocalBranchesExcludeProductionArr);
 
-        async function removeAllLocalBranches($allLocalBranchArr){
-            for (let i = 0; i < $allLocalBranchArr.length; i++) {
-                const _branch = $allLocalBranchArr[i];
-                console.log(`[WorkspaceManager] Deleting local branch ${_branch}...`);
-                await _self._git.raw('branch', '-D', _branch);
-                console.log(`[WorkspaceManager] Branch ${_branch} is deleted`);
-            }
-        }
+        // async function updateProduction(){
+        //     await _self._git.raw('checkout', 'production', '--');
+        //     await _self._git.raw('pull', 'origin', 'production')
+        // }
+
+        // async function removeAllLocalBranches($allLocalBranchArr){
+        //     for (let i = 0; i < $allLocalBranchArr.length; i++) {
+        //         const _branch = $allLocalBranchArr[i];
+        //         console.log(`[WorkspaceManager] Deleting local branch ${_branch}...`);
+        //         await _self._git.raw('branch', '-D', _branch);
+        //         console.log(`[WorkspaceManager] Branch ${_branch} is deleted`);
+        //     }
+        // }
     }
 
-    getAllLocalBranchExclMasterArr($allLocalBranchesStr){
+    getAllLocalBranchExclProductionArr($allLocalBranchesStr){
         let _allLocalBranchesSplit = $allLocalBranchesStr.split('\n'),
             _allLocalBranchesTrimStar = _allLocalBranchesSplit.map($branch=>$branch.replace('*', '')),
             _allLocalBranchesTrimSpace = _allLocalBranchesTrimStar.map($branch=>$branch.trim()),
             _allLocalBranches = _allLocalBranchesTrimSpace.filter($branch=>$branch!=''),
-            _allLocalBranchesExcludeMaster = _allLocalBranches.filter($branch=>$branch!='master');
-        return _allLocalBranchesExcludeMaster;
+            _allLocalBranchesExcludeProduction = _allLocalBranches.filter($branch=>$branch!='production');
+        return _allLocalBranchesExcludeProduction;
     }
 
     async fetchAndPullRepo($directory){
