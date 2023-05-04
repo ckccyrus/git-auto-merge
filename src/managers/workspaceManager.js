@@ -168,7 +168,8 @@ class WorkspaceManager{
             _repoPath = removeHttpsPrefix($gitPath),
             _gitUsername = _gitAuth.username,
             _gitPassword = _gitAuth.password,
-            _encodedGitPath = `https://${_gitUsername}:${_gitPassword}@${_repoPath}`;
+            // _encodedGitPath = `https://${_gitUsername}:${_gitPassword}@${_repoPath}`;
+            _encodedGitPath = `${_repoPath}`;
 
         try{
             console.log("[WorkspaceManager] start cloneRepo...");
