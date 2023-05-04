@@ -126,26 +126,24 @@ class WorkspaceManager{
         await _self._git.fetch();
         let _allLocalBranchesStr = await _self._git.raw('branch'),
             _allLocalBranchesExcludeProductionArr = _self.getAllLocalBranchExclProductionArr(_allLocalBranchesStr);
-        Messenger.print(`All branches: ${_allLocalBranchesStr}`);
-        Messenger.print(`All branches exclude production: ${_allLocalBranchesExcludeProductionArr}`);
-            
+
         // await updateMaster();
-        // await updateProduction();
-        // await removeAllLocalBranches(_allLocalBranchesExcludeProductionArr);
+        await updateProduction();
+        await removeAllLocalBranches(_allLocalBranchesExcludeProductionArr);
 
-        // async function updateProduction(){
-        //     await _self._git.raw('checkout', 'production', '--');
-        //     await _self._git.raw('pull', 'origin', 'production')
-        // }
+        async function updateProduction(){
+            await _self._git.raw('checkout', 'production', '--');
+            await _self._git.raw('pull', 'origin', 'production')
+        }
 
-        // async function removeAllLocalBranches($allLocalBranchArr){
-        //     for (let i = 0; i < $allLocalBranchArr.length; i++) {
-        //         const _branch = $allLocalBranchArr[i];
-        //         console.log(`[WorkspaceManager] Deleting local branch ${_branch}...`);
-        //         await _self._git.raw('branch', '-D', _branch);
-        //         console.log(`[WorkspaceManager] Branch ${_branch} is deleted`);
-        //     }
-        // }
+        async function removeAllLocalBranches($allLocalBranchArr){
+            for (let i = 0; i < $allLocalBranchArr.length; i++) {
+                const _branch = $allLocalBranchArr[i];
+                console.log(`[WorkspaceManager] Deleting local branch ${_branch}...`);
+                await _self._git.raw('branch', '-D', _branch);
+                console.log(`[WorkspaceManager] Branch ${_branch} is deleted`);
+            }
+        }
     }
 
     getAllLocalBranchExclProductionArr($allLocalBranchesStr){
