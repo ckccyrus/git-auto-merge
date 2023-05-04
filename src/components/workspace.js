@@ -55,7 +55,7 @@ class Workspace{
             },
             _isRootBranchValid = await _self.isValidRemoteBranch($rootBranch);
 
-        if(!_isRootBranchValid) throw new Error(`Remote doesn\'t contains ${$sourceBranch}`);
+        if(!_isRootBranchValid) throw new Error(`Remote doesn\'t contains ${$rootBranch}`);
 
         console.log(`[Workspace] Getting commit data <${$rootBranch}> by ${_self._folderName}... `);
 
