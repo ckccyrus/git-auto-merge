@@ -126,12 +126,12 @@ class WorkspaceManager{
         await _self._git.fetch();
         let _allLocalBranchesStr = await _self._git.raw('branch'),
             _allLocalBranchesExcludeProductionArr = _self.getAllLocalBranchExclProductionArr(_allLocalBranchesStr);
-        // await updateMaster();
         Messenger.print(`All branches: ${_allLocalBranchesStr}`);
         Messenger.print(`All branches exclude production: ${_allLocalBranchesExcludeProductionArr}`);
-
-        await updateProduction();
-        await removeAllLocalBranches(_allLocalBranchesExcludeProductionArr);
+            
+        // await updateMaster();
+        // await updateProduction();
+        // await removeAllLocalBranches(_allLocalBranchesExcludeProductionArr);
 
         // async function updateProduction(){
         //     await _self._git.raw('checkout', 'production', '--');
