@@ -159,7 +159,7 @@ class Workspace{
         console.log(`Fetch the build commit info from 92 Webserver`);
         shelljs.exec('pwd');
         console.log(`Get into 92 Webserver`);
-        shelljs.cd('/Volumes/WebServer/preview/gc/');
+        shelljs.cd('/Volumes/WebServer/preview/gc/prod/');
         shelljs.exec('pwd');
         if(fs.existsSync(_trimBranchName)){
             console.log(`Get into specific branch folder`);
