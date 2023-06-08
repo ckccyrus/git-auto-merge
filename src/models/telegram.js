@@ -6,7 +6,7 @@ class TelegramModel{
     _telegramTable;
 
     _CONFIG={
-        "FRONTEND_GROUP_TG_KEY": process.env.FRONTEND_GROUP_TG_KEY || "Frontend-Auto-Merge-Error"
+        "FRONTEND_GROUP_TG_KEY": process.env.FRONTEND_GROUP_TG_KEY || "Frontend-Auto-Merge-Conflict"
     }
 
     constructor(){
