@@ -169,8 +169,8 @@ console.log("Existence of .previewRecords: ", fs.existsSync(_recordPath));
             _hasMergeError = _allMergeErrors.length > 0;
 
         //strapi API
-        const _strapiAllMergeErrors = await _self._strapiService.getAllMergeFailRecords();
-        console.log('DEBUG STRAPI: [handleMergeMessage] _strapiAllMergeErrors', _strapiAllMergeErrors);
+        // const _strapiAllMergeErrors = await _self._strapiService.getAllMergeFailRecords();
+        // console.log('DEBUG STRAPI: [handleMergeMessage] _strapiAllMergeErrors', _strapiAllMergeErrors);
 
         if (_hasMergeError) {
             await _self._cmsService.sendMergeErrorMessage(_frontendGroupTG, _mergeErrorMsg);
@@ -184,8 +184,8 @@ console.log("Existence of .previewRecords: ", fs.existsSync(_recordPath));
         await _self._cmsService.sendMergeSuccess($evt);
 
         //strapi API
-        const _strapiMergeSuccess = await _self._strapiService.sendMergeSuccess($evt);
-        console.log('DEBUG STRAPI: [sendMergeSuccess] _strapiMergeSuccess', _strapiMergeSuccess);
+        // const _strapiMergeSuccess = await _self._strapiService.sendMergeSuccess($evt);
+        // console.log('DEBUG STRAPI: [sendMergeSuccess] _strapiMergeSuccess', _strapiMergeSuccess);
     }
 
     async sendMergeFail($evt) {
@@ -193,8 +193,8 @@ console.log("Existence of .previewRecords: ", fs.existsSync(_recordPath));
         await _self._cmsService.sendMergeFail($evt);
 
         //strapi API
-        const _strapiMergeFail = await _self._strapiService.sendMergeFail($evt)
-        console.log('DEBUG STRAPI: [sendMergeFail] _strapiMergeFail', _strapiMergeFail);
+        // const _strapiMergeFail = await _self._strapiService.sendMergeFail($evt)
+        // console.log('DEBUG STRAPI: [sendMergeFail] _strapiMergeFail', _strapiMergeFail);
     }
 
     async sendMergeStart() {
@@ -203,8 +203,8 @@ console.log("Existence of .previewRecords: ", fs.existsSync(_recordPath));
         await _self._cmsService.sendMergeStart(_rootBranch);
 
         //strapi API
-        const _strapiMergeStart = await _self._strapiService.sendMergeStart(_rootBranch);
-        console.log('DEBUG STRAPI: [sendMergeStart] _strapiMergeStart', _strapiMergeStart);
+        // const _strapiMergeStart = await _self._strapiService.sendMergeStart(_rootBranch);
+        // console.log('DEBUG STRAPI: [sendMergeStart] _strapiMergeStart', _strapiMergeStart);
     }
 
     sleep(ms) {
