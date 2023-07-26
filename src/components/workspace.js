@@ -91,9 +91,7 @@ class Workspace{
             _returnObj = {
                 success: false,
                 result: undefined,
-                sourceBranchAuthor: undefined,
                 sourceBranchCommitMsg: undefined,
-                sourceBranchCommitHash: undefined,
                 destinationBranchCommitHash: undefined,
                 destinationBranchPreviewCommitHash: undefined,
             },
@@ -114,14 +112,6 @@ class Workspace{
         shelljs.exec(`git checkout ${$destinationBranch} --`);
         shelljs.exec(`git fetch`);
         shelljs.exec(`git pull`);
-
-        console.log(`Source Branch Author`);
-        _returnObj.sourceBranchAuthor = shelljs.exec(`git log -1 ${$sourceBranch} --pretty=format:'%an'`).stdout;
-        console.log(`\n`);
-
-        console.log(`Source Branch Commit Hash`);
-        _returnObj.sourceBranchCommitHash = shelljs.exec(`git log -n 1 ${$sourceBranch} --pretty=format:'%H'`).stdout;
-        console.log(`\n`);
 
         console.log(`Source Branch Commit Message`);
         _returnObj.sourceBranchCommitMsg = shelljs.exec(`git log --oneline --pretty=format:'(%an)%s' --no-merges --max-count=1 ${$sourceBranch}`).stdout;
