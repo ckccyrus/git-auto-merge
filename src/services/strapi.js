@@ -77,8 +77,10 @@ class StrapiService {
             },
             _headers = {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
-            },
-            _result = await axios.post(_url + '?' + querystring.stringify(_data), null, { _headers });
+            };
+            // _result = await axios.post(_url + '?' + querystring.stringify(_data), null, { _headers });
+
+            console.log('clog _url', _url + '?' + querystring.stringify(_data));
     }
 
     async sendMergeSuccess($successRecord) {
@@ -93,8 +95,10 @@ class StrapiService {
             },
             _headers = {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
-            },
-            _result = await axios.post(_url + '?' + querystring.stringify(_data), null, { _headers });
+            };
+            // _result = await axios.post(_url + '?' + querystring.stringify(_data), null, { _headers });
+
+            console.log('clog _url', _url + '?' + querystring.stringify(_data));
     }
 
     async sendMergeFail($failRecord) {
@@ -110,8 +114,10 @@ class StrapiService {
             },
             _headers = {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
-            },
-            _result = await axios.post(_url + '?' + querystring.stringify(_data), null, { _headers });
+            };
+            // _result = await axios.post(_url + '?' + querystring.stringify(_data), null, { _headers });
+
+            console.log('clog _url', _url + '?' + querystring.stringify(_data));
     }
 
     // async getTelegramTable() {
