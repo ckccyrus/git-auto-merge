@@ -78,7 +78,7 @@ class StrapiService {
             _headers = {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
             },
-            _result = await axios.post(_url, querystring.stringify(_data), { _headers });
+            _result = await axios.post(_url + '?' + querystring.stringify(_data), { _headers });
     }
 
     async sendMergeSuccess($successRecord) {
@@ -94,7 +94,7 @@ class StrapiService {
             _headers = {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
             },
-            _result = await axios.post(_url, querystring.stringify(_data), { _headers });
+            _result = await axios.post(_url + '?' + querystring.stringify(_data), { _headers });
     }
 
     async sendMergeFail($failRecord) {
@@ -111,7 +111,7 @@ class StrapiService {
             _headers = {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
             },
-            _result = await axios.post(_url, querystring.stringify(_data), { _headers });
+            _result = await axios.post(_url + '?' + querystring.stringify(_data), { _headers });
     }
 
     // async getTelegramTable() {
