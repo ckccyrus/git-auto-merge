@@ -69,55 +69,58 @@ class StrapiService {
 
     async sendMergeStart($rootBranch) {
         console.log(`[STRAPI] Sending mergeStart to CMS with root ${$rootBranch}`);
-        let _self = this,
-            _rootBranchName = $rootBranch.replaceAll("/", "_"),
-            _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_START_SUFFIX}`,
-            _data = {
-                "root": _rootBranchName
-            },
-            _headers = {
+        const _self = this;
+        const _data = {
+            "root": $rootBranch
+        }
+        const _queryString = querystring.stringify(_data);
+        const _config = {
+            method: 'POST',
+            url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_START_SUFFIX}?${_queryString}`,
+            headers: {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
-            };
-            // _result = await axios.post(_url + '?' + querystring.stringify(_data), null, { _headers });
+            }
+        };
+        await axios.request(_config);
 
-            console.log('clog _url', _url + '?' + querystring.stringify(_data));
+
     }
 
     async sendMergeSuccess($successRecord) {
         console.log(`[STRAPI] Sending mergeSuccess to CMS from ${$successRecord.from} to ${$successRecord.to}`);
-        let _self = this,
-            _parentBranchName = $successRecord.from.replaceAll("/", "_"),
-            _targetBranchName = $successRecord.to.replaceAll("/", "_"),
-            _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_SUCCESS_SUFFIX}`,
-            _data = {
-                "parent": _parentBranchName,
-                "target": _targetBranchName
-            },
-            _headers = {
+        const _self = this;
+        const _data = {
+            "parent": $successRecord.from,
+            "target": $successRecord.to
+        }
+        const _queryString = querystring.stringify(_data);
+        const _config = {
+            method: 'POST',
+            url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_SUCCESS_SUFFIX}?${_queryString}`,
+            headers: {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
-            };
-            // _result = await axios.post(_url + '?' + querystring.stringify(_data), null, { _headers });
-
-            console.log('clog _url', _url + '?' + querystring.stringify(_data));
+            }
+        };
+        await axios.request(_config);
     }
 
     async sendMergeFail($failRecord) {
         console.log(`[STRAPI] Sending mergeFail to CMS from ${$failRecord.from} to ${$failRecord.to}`);
-        let _self = this,
-            _parentBranchName = $failRecord.from.replaceAll("/", "_"),
-            _targetBranchName = $failRecord.to.replaceAll("/", "_"),
-            _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_FAIL_SUFFIX}`,
-            _data = {
-                "parent": _parentBranchName,
-                "target": _targetBranchName,
-                "failMessage": $failRecord.fromCommitMsg
-            },
-            _headers = {
+        const _self = this;
+        const _data = {
+            "parent": $failRecord.from,
+            "target": $failRecord.to,
+            "failMessage": $failRecord.fromCommitMsg
+        }
+        const _queryString = querystring.stringify(_data);
+        const _config = {
+            method: 'POST',
+            url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_FAIL_SUFFIX}?${_queryString}`,
+            headers: {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
-            };
-            // _result = await axios.post(_url + '?' + querystring.stringify(_data), null, { _headers });
-
-            console.log('clog _url', _url + '?' + querystring.stringify(_data));
+            }
+        };
+        await axios.request(_config);
     }
 
     // async getTelegramTable() {
@@ -138,7 +141,7 @@ class StrapiService {
         let _self = this,
             _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_ALL_MERGE_FAIL_RECORDS_SUFFIX}`,
             _result = await axios.get(_url);
-        return _result;
+        return _result.data;
     }
 }
 
