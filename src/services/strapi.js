@@ -70,9 +70,10 @@ class StrapiService {
     async sendMergeStart($rootBranch) {
         console.log(`[STRAPI] Sending mergeStart to CMS with root ${$rootBranch}`);
         let _self = this,
+            _rootBranchName = $rootBranch.replaceAll("/", "_"),
             _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_START_SUFFIX}`,
             _data = {
-                "root": $rootBranch
+                "root": _rootBranchName
             },
             _headers = {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
@@ -83,10 +84,12 @@ class StrapiService {
     async sendMergeSuccess($successRecord) {
         console.log(`[STRAPI] Sending mergeSuccess to CMS from ${$successRecord.from} to ${$successRecord.to}`);
         let _self = this,
+            _parentBranchName = $successRecord.from.replaceAll("/", "_"),
+            _targetBranchName = $successRecord.to.replaceAll("/", "_"),
             _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_SUCCESS_SUFFIX}`,
             _data = {
-                "parent": $successRecord.from,
-                "target": $successRecord.to
+                "parent": _parentBranchName,
+                "target": _targetBranchName
             },
             _headers = {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
@@ -97,10 +100,12 @@ class StrapiService {
     async sendMergeFail($failRecord) {
         console.log(`[STRAPI] Sending mergeFail to CMS from ${$failRecord.from} to ${$failRecord.to}`);
         let _self = this,
+            _parentBranchName = $failRecord.from.replaceAll("/", "_"),
+            _targetBranchName = $failRecord.to.replaceAll("/", "_"),
             _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_FAIL_SUFFIX}`,
             _data = {
-                "parent": $failRecord.from,
-                "target": $failRecord.to,
+                "parent": _parentBranchName,
+                "target": _targetBranchName,
                 "failMessage": $failRecord.fromCommitMsg
             },
             _headers = {
@@ -120,7 +125,7 @@ class StrapiService {
         let _self = this,
             _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_BRANCH_TABLE_SUFFIX}`,
             _result = await axios.get(_url);
-        return _result;
+        return _result.data;
     }
 
     async getAllMergeFailRecords() {

@@ -44,10 +44,10 @@ class AutoMergeController {
     }
 
     initStrapiService() {
-        Messenger.openClose('CMS SERVICE CREATE');
+        Messenger.openClose('STRAPI SERVICE CREATE');
         let _self = this;
         _self._strapiService = new StrapiService();
-        Messenger.openClose('/CMS SERVICE CREATE');
+        Messenger.openClose('/STRAPI SERVICE CREATE');
     }
 
     async initBranchModel() {
