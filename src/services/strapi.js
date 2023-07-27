@@ -75,6 +75,8 @@ class StrapiService {
         }
         const _queryString = querystring.stringify(_data);
         const _config = {
+            timeout: 5000,
+            signal: AbortSignal.timeout(5000),
             method: 'POST',
             url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_START_SUFFIX}?${_queryString}`,
             headers: {
@@ -95,6 +97,8 @@ class StrapiService {
         }
         const _queryString = querystring.stringify(_data);
         const _config = {
+            timeout: 5000,
+            signal: AbortSignal.timeout(5000),
             method: 'POST',
             url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_SUCCESS_SUFFIX}?${_queryString}`,
             headers: {
@@ -114,6 +118,8 @@ class StrapiService {
         }
         const _queryString = querystring.stringify(_data);
         const _config = {
+            timeout: 5000,
+            signal: AbortSignal.timeout(5000),
             method: 'POST',
             url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_FAIL_SUFFIX}?${_queryString}`,
             headers: {
@@ -131,16 +137,32 @@ class StrapiService {
     // }
 
     async getBranchTable() {
-        let _self = this,
-            _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_BRANCH_TABLE_SUFFIX}`,
-            _result = await axios.get(_url);
+        // let _self = this,
+        //     _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_BRANCH_TABLE_SUFFIX}`,
+        //     _result = await axios.get(_url);
+        const _self = this;
+        const _config = {
+            timeout: 5000,
+            signal: AbortSignal.timeout(5000),
+            method: 'GET',
+            url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_BRANCH_TABLE_SUFFIX}`
+        };
+        const _result = await axios.request(_config);
         return _result.data;
     }
 
     async getAllMergeFailRecords() {
-        let _self = this,
-            _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_ALL_MERGE_FAIL_RECORDS_SUFFIX}`,
-            _result = await axios.get(_url);
+        // let _self = this,
+        //     _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_ALL_MERGE_FAIL_RECORDS_SUFFIX}`,
+        //     _result = await axios.get(_url);
+        const _self = this;
+        const _config = {
+            timeout: 5000,
+            signal: AbortSignal.timeout(5000),
+            method: 'GET',
+            url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_ALL_MERGE_FAIL_RECORDS_SUFFIX}`
+        };
+        const _result = await axios.request(_config);
         return _result.data;
     }
 }
