@@ -124,6 +124,7 @@ class AutoMergeController {
     async updatePreviewHandler($evt) {
         let _self = this;
         _self._previewRecordModel.addPreviewRecordForThisTime($evt);
+        await _self.sendUpdatePreviewCommit($evt);
     }
 
     appendInChargeDetail($errorStack) {
@@ -205,6 +206,11 @@ console.log("Existence of .previewRecords: ", fs.existsSync(_recordPath));
         //strapi API
         const _strapiMergeStart = await _self._strapiService.sendMergeStart(_rootBranch);
         console.log('DEBUG STRAPI: [sendMergeStart] _strapiMergeStart', _strapiMergeStart);
+    }
+
+    async sendUpdatePreviewCommit($evt) { //only available in strapi
+        const _self = this;
+        await _self._strapiService.sendUpdatePreviewCommit($evt);
     }
 
     sleep(ms) {

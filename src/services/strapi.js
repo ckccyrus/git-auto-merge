@@ -10,6 +10,7 @@ class StrapiService {
         'SEND_MERGE_START_SUFFIX': '/api/branches/merge/start',
         'SEND_MERGE_SUCCESS_SUFFIX': '/api/branches/merge/success',
         'SEND_MERGE_FAIL_SUFFIX': '/api/branches/merge/fail',
+        'SEND_UPDATE_PREVIEW_COMMIT_SUFFIX': '/api/branches/updatePreviewCommit',
         // 'GET_TELEGRAM_TABLE_SUFFIX': '/api/autoMergeGetAllTelegrams',
         'GET_ALL_MERGE_FAIL_RECORDS_SUFFIX': '/api/branches/get/allMergeFailRecords',
         // 'SEND_MERGE_ERROR_MESSAGE': '/api/autoMergeSendErrorMessage',
@@ -129,6 +130,31 @@ class StrapiService {
         await axios.request(_config);
     }
 
+    async sendUpdatePreviewCommit($previewRecord) {
+        console.log(`[STRAPI] Sending updatePreviewCommit to Strapi for ${$previewRecord.to}`);
+        const _self = this;
+        const _encodedName = encodeURIComponent($previewRecord.to);
+        const _mergeCommit = $previewRecord.result.destinationBranchCommitHash;
+        const _newPreviewCommit = $previewRecord.result.destinationBranchPreviewCommitHash;
+        let _data = {
+            "mergeCommit": _mergeCommit
+        };
+        if(_newPreviewCommit){
+            _data.newPreviewCommit = _newPreviewCommit;
+        }
+        const _queryString = querystring.stringify(_data);
+        const _config = {
+            timeout: 5000,
+            signal: AbortSignal.timeout(5000),
+            method: 'PUT',
+            url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_UPDATE_PREVIEW_COMMIT_SUFFIX}/${_encodedName}?${_queryString}`,
+            headers: {
+                'Authorization': _self._CONFIG.ACCESS_TOKEN
+            }
+        };
+        await axios.request(_config);
+    }
+
     // async getTelegramTable() {
     //     let _self = this,
     //         _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_TELEGRAM_TABLE_SUFFIX}`,
@@ -137,9 +163,6 @@ class StrapiService {
     // }
 
     async getBranchTable() {
-        // let _self = this,
-        //     _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_BRANCH_TABLE_SUFFIX}`,
-        //     _result = await axios.get(_url);
         const _self = this;
         const _config = {
             timeout: 5000,
@@ -147,14 +170,17 @@ class StrapiService {
             method: 'GET',
             url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_BRANCH_TABLE_SUFFIX}`
         };
-        const _result = await axios.request(_config);
-        return _result.data;
+        await axios
+            .request(_config)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(`[STRAPI] getBranchTable() error:`, error);
+            })
     }
 
     async getAllMergeFailRecords() {
-        // let _self = this,
-        //     _url = `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_ALL_MERGE_FAIL_RECORDS_SUFFIX}`,
-        //     _result = await axios.get(_url);
         const _self = this;
         const _config = {
             timeout: 5000,
@@ -162,8 +188,14 @@ class StrapiService {
             method: 'GET',
             url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_ALL_MERGE_FAIL_RECORDS_SUFFIX}`
         };
-        const _result = await axios.request(_config);
-        return _result.data;
+        await axios
+            .request(_config)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(`[STRAPI] getAllMergeFailRecords() error:`, error);
+            })
     }
 }
 
