@@ -3,7 +3,8 @@ var querystring = require('querystring');
 
 class StrapiService {
     _CONFIG = {
-        'STRAPI_URL': 'http://192.168.1.209/automerge', //proxy in MM209 to redirect
+        // 'STRAPI_URL': 'http://192.168.1.209/automerge', //proxy in MM209 to redirect
+        'STRAPI_URL': 'http://192.168.0.212:1337', //proxy in MM209 to redirect
         'ACCESS_TOKEN': 'Bearer 5ebfff3bed88348daf6dd13c0c68c17c67d74e815259a3d8af1ad79c2abb4aef8cdd8e10335321759dacae0244cd36ac0706989eba67decbea0c5b2af342b01a1c71746345ce4921f7955f5bdc3cce4cb053ed849c96b7073b643c612be13fafbbcc7d98e129e9564eb40bc43935a849136f76ed981d9d49cf6193df40d4d214', //strapi API token
         // 'SEND_MESSAGE_API_SUFFIX': '/api/SendMessage',
         'GET_BRANCH_TABLE_SUFFIX': '/api/branches/get/allBranches',
