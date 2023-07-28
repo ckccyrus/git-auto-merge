@@ -3,8 +3,8 @@ var querystring = require('querystring');
 
 class StrapiService {
     _CONFIG = {
-        // 'STRAPI_URL': 'http://192.168.1.209/automerge', //proxy in MM209 to redirect
-        'STRAPI_URL': 'http://192.168.0.212:1337', //proxy in MM209 to redirect
+        'STRAPI_URL': 'http://192.168.1.209/automerge', //proxy in MM209 to redirect
+        // 'STRAPI_URL': 'http://192.168.0.212:1337', //localhost
         'ACCESS_TOKEN': 'Bearer 5ebfff3bed88348daf6dd13c0c68c17c67d74e815259a3d8af1ad79c2abb4aef8cdd8e10335321759dacae0244cd36ac0706989eba67decbea0c5b2af342b01a1c71746345ce4921f7955f5bdc3cce4cb053ed849c96b7073b643c612be13fafbbcc7d98e129e9564eb40bc43935a849136f76ed981d9d49cf6193df40d4d214', //strapi API token
         // 'SEND_MESSAGE_API_SUFFIX': '/api/SendMessage',
         'GET_BRANCH_TABLE_SUFFIX': '/api/branches/get/allBranches',
@@ -70,7 +70,7 @@ class StrapiService {
     // }
 
     async sendMergeStart($rootBranch) {
-        console.log(`[STRAPI] Sending mergeStart to CMS with root ${$rootBranch}`);
+        console.log(`[STRAPI] Sending mergeStart to Strapi with root ${$rootBranch}`);
         const _self = this;
         const _data = {
             "root": $rootBranch
@@ -85,13 +85,13 @@ class StrapiService {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
             }
         };
+        console.log(`[STRAPI] Sending mergeStart to Strapi with ${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_START_SUFFIX}?${_queryString}`);
+
         await axios.request(_config);
-
-
     }
 
     async sendMergeSuccess($successRecord) {
-        console.log(`[STRAPI] Sending mergeSuccess to CMS from ${$successRecord.from} to ${$successRecord.to}`);
+        console.log(`[STRAPI] Sending mergeSuccess to Strapi from ${$successRecord.from} to ${$successRecord.to}`);
         const _self = this;
         const _data = {
             "parent": $successRecord.from,
@@ -107,11 +107,13 @@ class StrapiService {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
             }
         };
+        console.log(`[STRAPI] Sending mergeSuccess to Strapi with ${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_SUCCESS_SUFFIX}?${_queryString}`);
+
         await axios.request(_config);
     }
 
     async sendMergeFail($failRecord) {
-        console.log(`[STRAPI] Sending mergeFail to CMS from ${$failRecord.from} to ${$failRecord.to}`);
+        console.log(`[STRAPI] Sending mergeFail to Strapi from ${$failRecord.from} to ${$failRecord.to}`);
         const _self = this;
         const _data = {
             "parent": $failRecord.from,
@@ -128,6 +130,8 @@ class StrapiService {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
             }
         };
+        console.log(`[STRAPI] Sending mergeFail to Strapi with ${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_MERGE_FAIL_SUFFIX}?${_queryString}`);
+        
         await axios.request(_config);
     }
 
@@ -153,6 +157,8 @@ class StrapiService {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
             }
         };
+        console.log(`[STRAPI] Sending updatePreviewCommit to Strapi with ${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_UPDATE_PREVIEW_COMMIT_SUFFIX}?${_queryString}`);
+
         await axios.request(_config);
     }
 
@@ -171,6 +177,8 @@ class StrapiService {
             method: 'GET',
             url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_BRANCH_TABLE_SUFFIX}`
         };
+        console.log(`[STRAPI] Sending getBranchTable to Strapi with ${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_BRANCH_TABLE_SUFFIX}`);
+
         return await axios
             .request(_config)
             .then((response) => {
@@ -193,6 +201,8 @@ class StrapiService {
             method: 'GET',
             url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_ALL_MERGE_FAIL_RECORDS_SUFFIX}`
         };
+        console.log(`[STRAPI] Sending getAllMergeFailRecords to Strapi with ${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_ALL_MERGE_FAIL_RECORDS_SUFFIX}`);
+
         return await axios
             .request(_config)
             .then((response) => {
