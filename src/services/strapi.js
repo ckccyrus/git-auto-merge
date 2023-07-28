@@ -3,8 +3,8 @@ var querystring = require('querystring');
 
 class StrapiService {
     _CONFIG = {
-        'STRAPI_URL': 'http://192.168.0.212:1337', //localhost
-        'ACCESS_TOKEN': 'Bearer 906a4292205e6ef4ae5aabec024b68313105ea25900efcf1a0dbf5441e7280473e67c378ac107a21ce57de29022568ea99d5d5b80c481f31e5e24f8178333cf6e9c63bddc0337b969fd5e904ca42545a4e446526493ef088bd7234563d118de720adcf8663ca787c8d7a2d6e15f5a9aacdd2b0859a31768ff05e133268d76acc', //strapi API token
+        'STRAPI_URL': 'http://192.168.1.209/automerge', //proxy in MM209 to redirect
+        'ACCESS_TOKEN': 'Bearer 5ebfff3bed88348daf6dd13c0c68c17c67d74e815259a3d8af1ad79c2abb4aef8cdd8e10335321759dacae0244cd36ac0706989eba67decbea0c5b2af342b01a1c71746345ce4921f7955f5bdc3cce4cb053ed849c96b7073b643c612be13fafbbcc7d98e129e9564eb40bc43935a849136f76ed981d9d49cf6193df40d4d214', //strapi API token
         // 'SEND_MESSAGE_API_SUFFIX': '/api/SendMessage',
         'GET_BRANCH_TABLE_SUFFIX': '/api/branches/get/allBranches',
         'SEND_MERGE_START_SUFFIX': '/api/branches/merge/start',
