@@ -139,7 +139,7 @@ class StrapiService {
         let _data = {
             "mergeCommit": _mergeCommit
         };
-        if(_newPreviewCommit){
+        if (_newPreviewCommit) {
             _data.newPreviewCommit = _newPreviewCommit;
         }
         const _queryString = querystring.stringify(_data);
@@ -170,13 +170,17 @@ class StrapiService {
             method: 'GET',
             url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_BRANCH_TABLE_SUFFIX}`
         };
-        await axios
+        return await axios
             .request(_config)
             .then((response) => {
                 return response.data;
             })
             .catch((error) => {
-                console.log(`[STRAPI] getBranchTable() error:`, error);
+                if (error.code === 'ECONNABORTED') {
+                    console.log('[STRAPI] getBranchTable() error: Request timed out');
+                } else {
+                    console.log(`[STRAPI] getBranchTable() error:`, error.message);
+                }
             })
     }
 
@@ -188,13 +192,17 @@ class StrapiService {
             method: 'GET',
             url: `${_self._CONFIG.STRAPI_URL}${_self._CONFIG.GET_ALL_MERGE_FAIL_RECORDS_SUFFIX}`
         };
-        await axios
+        return await axios
             .request(_config)
             .then((response) => {
                 return response.data;
             })
             .catch((error) => {
-                console.log(`[STRAPI] getAllMergeFailRecords() error:`, error);
+                if (error.code === 'ECONNABORTED') {
+                    console.log('[STRAPI] getAllMergeFailRecords() error: Request timed out');
+                } else {
+                    console.log(`[STRAPI] getAllMergeFailRecords() error:`, error);
+                }
             })
     }
 }
