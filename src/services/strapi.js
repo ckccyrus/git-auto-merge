@@ -157,7 +157,7 @@ class StrapiService {
                 'Authorization': _self._CONFIG.ACCESS_TOKEN
             }
         };
-        console.log(`[STRAPI] Sending updatePreviewCommit to Strapi with ${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_UPDATE_PREVIEW_COMMIT_SUFFIX}?${_queryString}`);
+        console.log(`[STRAPI] Sending updatePreviewCommit to Strapi with ${_self._CONFIG.STRAPI_URL}${_self._CONFIG.SEND_UPDATE_PREVIEW_COMMIT_SUFFIX}/${_encodedName}?${_queryString}`);
 
         await axios.request(_config);
     }
