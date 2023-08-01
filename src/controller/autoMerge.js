@@ -124,7 +124,7 @@ class AutoMergeController {
     async updatePreviewHandler($evt) {
         let _self = this;
         _self._previewRecordModel.addPreviewRecordForThisTime($evt);
-        // await _self.sendUpdatePreviewCommit($evt);
+        await _self.sendUpdatePreviewCommit($evt);
     }
 
     appendInChargeDetail($errorStack) {
