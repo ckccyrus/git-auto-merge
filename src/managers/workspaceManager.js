@@ -2,11 +2,11 @@ const { v4: uuidv4 } = require('uuid');
 const fs = require('fs-extra');
 const simpleGit = require('simple-git');
 const appRoot = require('app-root-path');
-const Workspace = require(`${appRoot}/src/components/workspace`);
+const Workspace = require(`${appRoot}/src/new-components/workspace`);
 const Messenger = require(`${appRoot}/src/utils/messenger`);
 
 // Singleton
-class WorkspaceManager{
+class WorkspaceManager {
     _git
     _instance
     _primaryWorkspace
@@ -15,236 +15,241 @@ class WorkspaceManager{
         password: undefined
     }
     _allWorkspaces = []
-    
+
     _CONFIG = {
         'WORKSPACE_ROOT_DIR': `${appRoot}/workspaces`,
         'PRIMARY_WORKSPACE_DIR': `${appRoot}/workspaces/primary`,
-        'TARGET_GIT_PATH': process.env.TARGET_GIT_PATH || ''
+        'TARGET_GIT_PATH': process.env.TARGET_GIT_PATH || '',
+        'ROOT_BRANCH': 'production'
     }
-    
+
     constructor() {
         let _self = this;
         _self.initGit();
         _self.initGitAuth();
-        // _self.setupWorkspaces();
-        _self.removeWorkspaces();
     }
 
     //---------------Singleton---------------
-    static getInstance(){
+    static getInstance() {
         let _self = this;
-        if(!_self._instance){
+        if (!_self._instance) {
             _self._instance = new WorkspaceManager();
         }
         return _self._instance;
     }
 
-    initGit(){
-        let _self = this,
-            progress = ({method, stage, progress}) => {
-                Messenger.print(`GIT: ${method} ${stage} stage ${progress}% complete`, true);
-            }
-        _self._git = simpleGit({progress});
+    //---------------------------------------------------------------
+    //------------------------------Constructor---------------------------------
+    initGit() {
+        const _self = this;
+        const progress = ({ method, stage, progress }) => {
+            Messenger.print(`GIT: ${method} ${stage} stage ${progress}% complete`, true);
+        }
+        _self._git = simpleGit({ progress });
     }
 
-    initGitAuth(){
-        let _self = this;
+    initGitAuth() {
+        const _self = this;
         _self._gitAuth = _self._gitAuth || {};
         _self._gitAuth.username = encodeURIComponent(process.env.GIT_USERNAME);
         _self._gitAuth.password = encodeURIComponent(process.env.GIT_PASSWORD);
-        if(!_self._gitAuth.username || !_self._gitAuth.password){
+        if (!_self._gitAuth.username || !_self._gitAuth.password) {
             Promise.reject(
-                new Error ('[WorkspaceManager] Either process.env.GIT_USERNAME or process.env.GIT_PASSWORD are undefined!')
+                new Error('[WorkspaceManager] Either process.env.GIT_USERNAME or process.env.GIT_PASSWORD are undefined!')
             )
         }
     }
 
-    async removeWorkspaces(){
-        let _self = this,
-            _isWorkspaceRootExists = fs.existsSync(_self._CONFIG.WORKSPACE_ROOT_DIR);
+    //---------------------------------------------------------------
+    //------------------------------Init (call from controller)---------------------------------
+    async removeWorkspaces() {
+        /**
+         * need to clone the latest version of netgame
+         * remove the workspace that is rent and cloned before
+         */
 
-        if(!_isWorkspaceRootExists) return;
+        const _self = this;
+        const _isWorkspaceRootExists = fs.existsSync(_self._CONFIG.WORKSPACE_ROOT_DIR);
+        if (!_isWorkspaceRootExists) return;
 
-        let _allWorkspaceFolderNames = await getAllWorkspaceFolderName();
-        
-        for (let i = 0; i < _allWorkspaceFolderNames.length; i++) {
-            let _workspaceFolderName = _allWorkspaceFolderNames[i],
-                _workspaceDirectory = `${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_workspaceFolderName}`,
-                _isWorkspaceDirectoryExist = fs.existsSync(_workspaceDirectory);
-            if(_isWorkspaceDirectoryExist){
-                console.log(`[WorkspaceManager] removing ${_workspaceFolderName}...`);
-                await fs.promises.rm(_workspaceDirectory, { recursive: true, force: true })
-                console.log(`[WorkspaceManager] ${_workspaceFolderName} is removed`);
+        const _allWorkspaceGitFolderName = await getAllWorkspaceGitFolderName();
+        Messenger.log('List of previous workspace need to be removed', _allWorkspaceGitFolderName);
+
+        for (const _eachFolder of _allWorkspaceGitFolderName) {
+            const _directory = `${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_eachFolder}`
+            const _isExist = fs.existsSync(_directory);
+
+            if (_isExist) {
+                Messenger.log(`[WorkspaceManager] removing ${_eachFolder}...`);
+                await fs.promises.rm(_directory, { recursive: true, force: true })
+                Messenger.log(`[WorkspaceManager] ${_eachFolder} is removed`);
             }
         }
 
-        async function getAllWorkspaceFolderName(){
-            let _allSubPath = await fs.promises.readdir(_self._CONFIG.WORKSPACE_ROOT_DIR, { withFileTypes: true}),
-                _allSubDirectories = _allSubPath.filter($dirent => $dirent.isDirectory()),
-                _allGitSubDirectoryObjects = _allSubDirectories.filter($dirent => {
-                    let _direntName = $dirent.name,
-                        _isGitDir = fs.existsSync(`${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_direntName}/.git`);
-                    return _isGitDir;
-                }),
-                _allGitFolderNames = _allGitSubDirectoryObjects.map($dirent => $dirent.name).filter($direntName => $direntName != 'primary');
-            
+        async function getAllWorkspaceGitFolderName() {
+            const _allSubPath = await fs.promises.readdir(_self._CONFIG.WORKSPACE_ROOT_DIR, { withFileTypes: true });
+            const _allSubDirectories = _allSubPath.filter($dirent => $dirent.isDirectory());
+            const _allGitSubDirectoryObjects = _allSubDirectories.filter($dirent => {
+                const _direntName = $dirent.name;
+                const _isGitDir = fs.existsSync(`${_self._CONFIG.WORKSPACE_ROOT_DIR}/${_direntName}/.git`);
+                return _isGitDir;
+            });
+            const _allGitFolderNames = _allGitSubDirectoryObjects.map($dirent => $dirent.name).filter($direntName => $direntName != 'primary');
+
             return _allGitFolderNames;
         }
     }
 
-    async initPrimaryWorkspace(){
-        let _self = this,
-            _workspaceRootDir = _self._CONFIG.WORKSPACE_ROOT_DIR,
-            _isRootWorkspaceDirExist = fs.existsSync(_workspaceRootDir);
+    async initPrimaryWorkspace() {
+        /**
+         * - clone project to primary for the first time
+         * - re pull master to reset workspace
+         */
+        const _self = this;
+        const _workspaceRootDir = _self._CONFIG.WORKSPACE_ROOT_DIR;
+        const _isWorkspaceRootDirExist = fs.existsSync(_workspaceRootDir);
 
-        if(!_isRootWorkspaceDirExist){
+        if (!_isWorkspaceRootDirExist) {
             await fs.promises.mkdir(_workspaceRootDir, { recursive: true });
         }
 
-        let _primaryWorkspaceDir = _self._CONFIG.PRIMARY_WORKSPACE_DIR,
-            _targetGitPath = _self._CONFIG.TARGET_GIT_PATH,
-            _isFolderExist = fs.existsSync(_primaryWorkspaceDir),
-            _isGitDirectory = fs.existsSync(`${_primaryWorkspaceDir}/.git`);
-        
-        if(_isFolderExist && _isGitDirectory){
-            // await _self.fetchAndPullRepo(_primaryWorkspaceDir);
+        const _primaryWorkspaceDir = _self._CONFIG.PRIMARY_WORKSPACE_DIR;
+        const _targetGitPath = _self._CONFIG.TARGET_GIT_PATH;
+        const _isFolderExist = fs.existsSync(_primaryWorkspaceDir);
+        const _isGitDirectory = fs.existsSync(`${_primaryWorkspaceDir}/.git`);
+
+        if (_isFolderExist && _isGitDirectory) {
             await _self.resetWorkspace(_primaryWorkspaceDir);
-        }else{
-            if(!_targetGitPath) throw new Error('process.env.TARGET_GIT_PATH is undefiend!')
+        } else {
+            if (!_targetGitPath) throw new Error('process.env.TARGET_GIT_PATH is undefiend!')
             fs.rmSync(_primaryWorkspaceDir, { recursive: true, force: true });
             await fs.promises.mkdir(_primaryWorkspaceDir, { recursive: true });
             await _self.cloneRepo(_targetGitPath, _primaryWorkspaceDir);
         }
     }
 
-    async resetWorkspace($directory){
-        // fetch
-        // switch to master and pull
-        // remove all local branches
+    async resetWorkspace($directory) {
+        /**
+         * get all local branches besides root
+         * switch to root and pull
+         * remove all local branches
+         *
+         * git branch format:
+            DEV/112/bettingChip
+            * DEV/112/changeBacGameType (==> checkout)
+            production
+         */
+
         let _self = this;
         _self._git = simpleGit($directory);
         await _self._git.fetch();
-        let _allLocalBranchesStr = await _self._git.raw('branch'),
-            _allLocalBranchesExcludeProductionArr = _self.getAllLocalBranchExclProductionArr(_allLocalBranchesStr);
+        const _allLocalBranchesStr = await _self._git.raw('branch');  //== command (git branch) 
+        const _allLocalBranchesExcludeRoot = getAllLocalBranchExcludeRoot(_allLocalBranchesStr);
 
-        // await updateMaster();
-        await updateProduction();
-        await removeAllLocalBranches(_allLocalBranchesExcludeProductionArr);
+        await updateRoot();
+        await removeAllLocalBranches(_allLocalBranchesExcludeRoot);
 
-        async function updateProduction(){
-            await _self._git.raw('checkout', 'production', '--');
-            await _self._git.raw('pull', 'origin', 'production')
+        function getAllLocalBranchExcludeRoot($branches) {
+            const _allBranchesArr = $branches.split('\n');
+            const _trimStarArr = _allBranchesArr.map($branch => $branch.replace('*', ''));
+            const _trimSpaceArr = _trimStarArr.map($branch => $branch.trim());
+            const _allExistBranches = _trimSpaceArr.filter($branch => $branch !== '');
+            const _allBranchesExcludeRoot = _allExistBranches.filter($branch => $branch !== _self._CONFIG.ROOT_BRANCH);
+
+            return _allBranchesExcludeRoot;
         }
 
-        async function removeAllLocalBranches($allLocalBranchArr){
-            for (let i = 0; i < $allLocalBranchArr.length; i++) {
-                const _branch = $allLocalBranchArr[i];
-                console.log(`[WorkspaceManager] Deleting local branch ${_branch}...`);
-                await _self._git.raw('branch', '-D', _branch);
-                console.log(`[WorkspaceManager] Branch ${_branch} is deleted`);
+        async function updateRoot() {
+            await _self._git.raw('checkout', _self._CONFIG.ROOT_BRANCH, '--');
+            await _self._git.raw('pull', 'origin', _self._CONFIG.ROOT_BRANCH)
+        }
+
+        async function removeAllLocalBranches($allLocalBranches) {
+            for (const _localBranch of $allLocalBranches) {
+                Messenger.log(`[WorkspaceManager] Deleting local branch ${_localBranch}...`);
+                await _self._git.raw('branch', '-D', _localBranch);
+                Messenger.log(`[WorkspaceManager] Branch ${_localBranch} is deleted`);
             }
         }
     }
 
-    getAllLocalBranchExclProductionArr($allLocalBranchesStr){
-        let _allLocalBranchesSplit = $allLocalBranchesStr.split('\n'),
-            _allLocalBranchesTrimStar = _allLocalBranchesSplit.map($branch=>$branch.replace('*', '')),
-            _allLocalBranchesTrimSpace = _allLocalBranchesTrimStar.map($branch=>$branch.trim()),
-            _allLocalBranches = _allLocalBranchesTrimSpace.filter($branch=>$branch!=''),
-            _allLocalBranchesExcludeProduction = _allLocalBranches.filter($branch=>$branch!='production');
-        return _allLocalBranchesExcludeProduction;
-    }
+    async cloneRepo($gitPath, $directory) {
+        /**
+         * clone netgame project to primary folder
+         */
+        Messenger.log("[WorkspaceManager] cloneRepo: ");
+        const _self = this;
+        const _gitAuth = _self._gitAuth;
+        const _repoPath = removeHttpsPrefix($gitPath);
+        const _gitUsername = _gitAuth.username;
+        const _gitPassword = _gitAuth.password;
+        const _encodedGitPath = `https://${_gitUsername}:${_gitPassword}@${_repoPath}`;
 
-    async fetchAndPullRepo($directory){
-        let _self = this;
-        _self._git = simpleGit($directory);
-        await _self._git.fetch();
-        await _self._git.pull();
-        Messenger.print(`Finished fetch and pull in ${$directory}`)
-    }
-
-    async cloneRepo($gitPath, $directory){
-        console.log("[WorkspaceManager] cloneRepo: ");
-        let _self = this,
-            _gitAuth = _self._gitAuth,
-            _repoPath = removeHttpsPrefix($gitPath),
-            _gitUsername = _gitAuth.username,
-            _gitPassword = _gitAuth.password,
-            _encodedGitPath = `https://${_gitUsername}:${_gitPassword}@${_repoPath}`;
-            // _encodedGitPath = `${_repoPath}`;
-
-        try{
-            console.log("[WorkspaceManager] start cloneRepo...");
+        try {
+            Messenger.log("[WorkspaceManager] START cloneRepo...");
             await _self._git.clone(_encodedGitPath, $directory);
-        }catch($err){ 
+            Messenger.log("[WorkspaceManager] FINISH cloneRepo...");
+        } catch ($err) {
             throw new Error($err);
         }
 
-        function removeHttpsPrefix ($path) {
+        function removeHttpsPrefix($path) {
             return $path.replace('https://', '');
         }
     }
 
-    async getIdleWorkspace(){
-        let _self = this,
-            _found = false,
-            _checked = 0;
+    //---------------------------------------------------------------
+    //------------------------------Get idle workspace (call from branch node)---------------------------------
+    async getIdleWorkspace() {
+        const _self = this;
 
-        for(let i = 0; i < _self._allWorkspaces.length; i++){
-            let _workspace = _self._allWorkspaces[i],
-                _isLastLoop = _checked == _self._allWorkspaces.length;
-            if(_workspace.isIdle){
+        for (const _workspace of _self._allWorkspaces) {
+            if (_workspace.isIdle) {
                 _workspace.rent();
-                _found = true;
                 return _workspace;
-            }
-            if(_isLastLoop && !_found){
-                let _newWorkspace = await _self.createWorkspace();
-                _newWorkspace.rent();
-                return _newWorkspace;
             }
         }
 
-        let _newWorkspace = await _self.createWorkspace();
+        const _newWorkspace = await _self.createWorkspace();
         _newWorkspace.rent();
         return _newWorkspace;
     }
 
-    async releaseWorkspace($workspace){
-        let _self = this,
-            _targetUuid = $workspace.uuid;
-        for (let i = 0; i < _self._allWorkspaces.length; i++) {
-            const _workspace = _self._allWorkspaces[i];
-            if(_workspace.uuid == _targetUuid){
-                _workspace.release();
-            }
+    async releaseWorkspace({ uuid }) {
+        const _self = this;
+        for (const _workspace of _self._allWorkspaces) {
+            if (_workspace.uuid == uuid) _workspace.release();
         }
     }
 
-    async createWorkspace(){
-        //clone from primary
-        let _self = this,
-            _uuid = uuidv4(),
-            _workspaceRootDir = _self._CONFIG.WORKSPACE_ROOT_DIR,
-            _primaryWorkspaceDir = _self._CONFIG.PRIMARY_WORKSPACE_DIR,
-            _newWorkspaceFolderName = `workspace_${_uuid}`,
-            _newWorkspaceDir = `${_workspaceRootDir}/${_newWorkspaceFolderName}`,
-            _sourceDir = _primaryWorkspaceDir,
-            _destinationDir = _newWorkspaceDir; 
+    async createWorkspace() {
+        /**
+         * clone from primary
+         */
+        const _self = this;
+        const _uuid = uuidv4();
+        const _workspaceRootDir = _self._CONFIG.WORKSPACE_ROOT_DIR;
+        const _primaryWorkspaceDir = _self._CONFIG.PRIMARY_WORKSPACE_DIR;
+        const _newWorkspaceFolderName = `workspace_${_uuid}`;
+        const _newWorkspaceDir = `${_workspaceRootDir}/${_newWorkspaceFolderName}`;
+        const _sourceDir = _primaryWorkspaceDir;
+        const _destinationDir = _newWorkspaceDir;
+        
+        Messenger.log(`[Workspace] Creating workspace ${_uuid} ...`);
 
-        try{
+        try {
             await fs.copy(_sourceDir, _destinationDir, { overwrite: true });
-        }catch($err){
+        } catch ($err) {
             throw new Error($err);
         }
 
         //create Workspace instance
-        let _sendObj = {
-                uuid: _uuid,
-                folderName: _newWorkspaceFolderName,
-                directory: _workspaceRootDir
-            },
-            _newWorkspace = new Workspace(_sendObj);
+        const _sendObj = {
+            uuid: _uuid,
+            folderName: _newWorkspaceFolderName,
+            directory: _workspaceRootDir
+        };
+        const _newWorkspace = new Workspace(_sendObj);
         _self._allWorkspaces.push(_newWorkspace);
         return _newWorkspace;
     }

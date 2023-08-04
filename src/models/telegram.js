@@ -2,29 +2,26 @@ const appRoot = require('app-root-path');
 require('dotenv').config({ path: `${appRoot}/.env` });
 
 class TelegramModel{
-    _cmsService;
     _telegramTable;
 
     _CONFIG={
         "FRONTEND_GROUP_TG_KEY": process.env.FRONTEND_GROUP_TG_KEY || "Frontend-Auto-Merge-Conflict"
     }
 
-    constructor(){
-        let _self = this;
-    }
+    constructor(){ }
 
     setTelegramTable($telegramTable){
-        let _self = this;
+        const _self = this;
         _self._telegramTable = $telegramTable;
     }
 
     getTelegramTable(){
-        let _self = this;
+        const _self = this;
         return _self._telegramTable;
     }
 
     getFrontendGroupTG(){
-        let _self = this;
+        const _self = this;
         for (let $i = 0; $i < _self._telegramTable.length; $i++) {
             const _telegramData = _self._telegramTable[$i];
             if(_telegramData['o_key'] === _self._CONFIG.FRONTEND_GROUP_TG_KEY) return _telegramData["mchatId"];
@@ -32,8 +29,8 @@ class TelegramModel{
     }
 
     getChatIdByStaffCodeArr($staffCodeArr){
-        let _self = this,
-            _returnObj = [];
+        const _self = this;
+        const _returnObj = [];
         for (let $i = 0; $i < $staffCodeArr.length; $i++) {
             const _staffCode = $staffCodeArr[$i],
                   _chatId = _self.getChatIdByStaffCode(_staffCode);
@@ -43,7 +40,7 @@ class TelegramModel{
     }
 
     getChatIdByStaffCode($staffCode){
-        let _self = this;
+        const _self = this;
         for (let $i = 0; $i < _self._telegramTable.length; $i++) {
             const _telegramData = _self._telegramTable[$i];
             if(_telegramData['o_key'] === $staffCode) return _telegramData['mchatId'];
@@ -51,8 +48,8 @@ class TelegramModel{
     }
 
     getAllFrontendTG(){
-        let _self = this,
-            _result = [];
+        const _self = this;
+        const _result = [];
         for (let $i = 0; $i < _self._telegramTable.length; $i++) {
             const _telegramData = _self._telegramTable[$i];
             if(_telegramData['mType'] === 'individual'){
