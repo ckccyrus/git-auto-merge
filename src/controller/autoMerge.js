@@ -273,12 +273,14 @@ class AutoMergeController {
         const _self = this;
         // const _allMergeErrors = await _self._cmsService.getAllMergeFailRecords();
         const _newAllMergeErrors = await _self._strapiService.getAllMergeFailRecords();
-        const _allFrontendTG = _self._telegramModel.getAllFrontendTG();
-        const _mergeErrorMsg = MessageBuilderUtil.getMergeFailMsg(_newAllMergeErrors, _allFrontendTG);
         const _frontendGroupTG = _self._telegramModel.getFrontendGroupTG();
         const _hasMergeError = _newAllMergeErrors.length > 0;
-
+        Messenger.log('length', _newAllMergeErrors.length);
+        Messenger.log('Merge Error Msg', _newAllMergeErrors);
         if (_hasMergeError) {
+            const _allFrontendTG = _self._telegramModel.getAllFrontendTG();
+            const _mergeErrorMsg = MessageBuilderUtil.getMergeFailMsg(_newAllMergeErrors, _allFrontendTG);
+            Messenger.log('Merge Error Msg', _mergeErrorMsg);
             await _self._cmsService.sendMergeErrorMessage(_frontendGroupTG, _mergeErrorMsg);
         } else {
             await _self._cmsService.clearMergeErrorMessage(_frontendGroupTG);
