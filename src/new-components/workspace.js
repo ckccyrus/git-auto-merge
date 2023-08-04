@@ -117,10 +117,6 @@ class Workspace {
         _returnObj.parentBranchCommitMsg = shelljs.exec(`git log --oneline --pretty=format:'(%an)%s' --no-merges --max-count=1 ${$parentBranch}`).stdout;
         console.log(`\n`);
 
-        Messenger.log(`Target Branch Commit Hash`);
-        _returnObj.targetBranchCommitHash = _self.getCommitHash($targetBranch);
-        _returnObj.targetBranchPreviewCommitHash = _self.getBuildInfoFromWebServer($targetBranch);
-
         try {
             const _result = shelljs.exec(`git merge origin/${$parentBranch} -m "[ci-skip] Auto merge branch ${$parentBranch} into ${$targetBranch}"`);
             const _status = _result.code;
@@ -138,6 +134,10 @@ class Workspace {
             shelljs.exec('git merge --abort');
         }
 
+        Messenger.log(`Target Branch Commit Hash`);
+        _returnObj.targetBranchCommitHash = _self.getCommitHash($targetBranch);
+        _returnObj.targetBranchPreviewCommitHash = _self.getBuildInfoFromWebServer($targetBranch);
+        
         Messenger.log(`[Workspace] Merge Result: `, _returnObj);
         Messenger.log(`[Workspace] Finished merge <${$parentBranch}> into <${$targetBranch}> by ${_self._folderName}`);
         Messenger.log(`====================================================================================================`);
