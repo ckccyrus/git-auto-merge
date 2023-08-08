@@ -16,10 +16,10 @@ class MessageBuilder {
             const _authorChatKey = _authorChatIdObj['o_key'];
 
             _msg += `\u{1F4A5} <b>${_error['Parent']}</b> ----> <b>${_error['Name']}</b>\n\n`;
-            _msg += _authorChatId ? `<b>Author: </b> <a href="tg://user?id=${_authorChatId}">@${_authorChatKey}</a> \n\n` : '';
-            _msg += `<b>Commit: </b>${_error['MergeFailCommitMessage']}\n\n`;
             _msg += `<b>In Charge: </b>`;
             _msg += getAppendInChargeMsg(_error, $allFrontendTG);
+            _msg += `<b>Commit: </b>${_error['MergeFailCommitMessage']}\n\n`;
+            _msg += _authorChatId ? `<b>Author: </b> <a href="tg://user?id=${_authorChatId}">@${_authorChatKey}</a> \n\n` : '';
             _msg += '\n————————————';
         }
 
