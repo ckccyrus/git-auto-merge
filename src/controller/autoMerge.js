@@ -113,6 +113,7 @@ class AutoMergeController {
         _self._telegramModel = new TelegramModel();
         const _telegramModel = await _self._cmsService.getTelegramTable();
         _self._telegramModel.setTelegramTable(_telegramModel);
+        console.log('clog _self._telegramModel.getAllFrontendTG()', _self._telegramModel.getAllFrontendTG());
     }
 
     // initBranchTree() {
@@ -273,8 +274,9 @@ class AutoMergeController {
         const _self = this;
         // const _allMergeErrors = await _self._cmsService.getAllMergeFailRecords();
         const _newAllMergeErrors = await _self._strapiService.getAllMergeFailRecords();
+        const _mergeFailRecordsForThisTime = _self._newMergeRecordModel.getMergeFailRecordsForThisTime();
         const _frontendGroupTG = _self._telegramModel.getFrontendGroupTG();
-        const _hasMergeError = _newAllMergeErrors.length > 0;
+        const _hasMergeError = (_newAllMergeErrors.length > 0) || (_mergeFailRecordsForThisTime.length > 0);
         
         if (_hasMergeError) {
             const _allFrontendTG = _self._telegramModel.getAllFrontendTG();
