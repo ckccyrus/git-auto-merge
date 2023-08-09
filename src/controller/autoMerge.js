@@ -165,7 +165,7 @@ class AutoMergeController {
         const _self = this;
         // _self._previewRecordModel.addPreviewRecordForThisTime($evt);
         _self._newPreviewRecordModel.addPreviewRecordForThisTime($evt);
-        await _self.sendUpdatePreviewCommit($evt);
+        // await _self.sendUpdatePreviewCommit($evt);
     }
 
     async sendMergeSuccess($evt) {
@@ -287,6 +287,19 @@ class AutoMergeController {
         }
     }
 
+    //---------------------------------------------------------------
+    //------------------------------Update Merge commit and Preview commit---------------------------------
+    async updatePreviewCommit(){
+        Messenger.openClose('UPDATE ALL PREVIEW COMMIT');
+        const _self = this;
+        const _previewRecordsForThisTime = _self._newPreviewRecordModel.getPreviewRecordsForThisTime();
+
+        for (const _eachRecord of _previewRecordsForThisTime) {
+            await _self._strapiService.sendUpdatePreviewCommit(_eachRecord);
+        }
+
+        Messenger.openClose('/UPDATE ALL PREVIEW COMMIT');
+    }
     //---------------------------------------------------------------
     //------------------------------Export new preview records---------------------------------
     exportPreviewRecords() {

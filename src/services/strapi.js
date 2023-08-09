@@ -89,9 +89,9 @@ class StrapiService {
 
     async sendUpdatePreviewCommit($previewRecord) {
         const _self = this;
-        const _encodedName = encodeURIComponent($previewRecord.target);
-        const _mergeCommit = $previewRecord.result.targetBranchCommitHash;
-        const _newPreviewCommit = $previewRecord.result.targetBranchPreviewCommitHash;
+        const _encodedName = encodeURIComponent($previewRecord.branchName);
+        const _mergeCommit = $previewRecord.targetBranchCommitHash;
+        const _newPreviewCommit = $previewRecord.targetBranchPreviewCommitHash;
         Messenger.log(`[STRAPI] Sending updatePreviewCommit to Strapi for ${_encodedName}`);
         const _data = {
             "mergeCommit": _mergeCommit
