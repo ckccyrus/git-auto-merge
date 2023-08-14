@@ -10,6 +10,7 @@ async function asyncMain(){
     await _autoMergeController.init();
     await _autoMergeController.clearOldPreviewRecords();
     await _autoMergeController.startMerge();
+    await new Promise(resolve => setTimeout(resolve, 2000));
     await _autoMergeController.postMergeAction();
     await _autoMergeController.updatePreviewCommit();
     await _autoMergeController.exportPreviewRecords();
