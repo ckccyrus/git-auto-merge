@@ -113,7 +113,6 @@ class AutoMergeController {
         _self._telegramModel = new TelegramModel();
         const _telegramModel = await _self._cmsService.getTelegramTable();
         _self._telegramModel.setTelegramTable(_telegramModel);
-        console.log('clog _self._telegramModel.getAllFrontendTG()', _self._telegramModel.getAllFrontendTG());
     }
 
     // initBranchTree() {
