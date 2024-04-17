@@ -2,7 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 const fs = require('fs-extra');
 const simpleGit = require('simple-git');
 const appRoot = require('app-root-path');
-const Workspace = require(`${appRoot}/src/new-components/workspace`);
+const Workspace = require(`${appRoot}/src/components/workspace`);
 const Messenger = require(`${appRoot}/src/utils/messenger`);
 
 // Singleton

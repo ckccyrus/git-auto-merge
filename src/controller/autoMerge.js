@@ -11,43 +11,30 @@ const CmsService = require(`${appRoot}/src/services/cms`);
 const StrapiService = require(`${appRoot}/src/services/strapi`);
 
 //components
-const BranchTree = require(`${appRoot}/src/components/branchTree`);
-const NewBranchTree = require(`${appRoot}/src/new-components/branchTree`);
+const NewBranchTree = require(`${appRoot}/src/components/branchTree`);
 
 //manager
 const WorkspaceManager = require(`${appRoot}/src/managers/workspaceManager`);
 
-//old model for pimcore
-const BranchModel = require(`${appRoot}/src/models/branch`);
-const MergeRecordModel = require(`${appRoot}/src/models/mergeRecord`);
-const PreviewRecordModel = require(`${appRoot}/src/models/previewRecord`);
-
 const TelegramModel = require(`${appRoot}/src/models/telegram`);
 
 //new model for strapi
-const NewBranchModel = require(`${appRoot}/src/new-models/branch`);
-const NewMergeRecordModel = require(`${appRoot}/src/new-models/mergeRecord`);
-const NewPreviewRecordModel = require(`${appRoot}/src/new-models/previewRecord`);
+const NewBranchModel = require(`${appRoot}/src/models/branch`);
+const NewMergeRecordModel = require(`${appRoot}/src/models/mergeRecord`);
+const NewPreviewRecordModel = require(`${appRoot}/src/models/previewRecord`);
 
 
 class AutoMergeController {
-    _branchTree;
-    _newBranchTree;
-
-    _workspaceManager;
-
     _cmsService;
     _strapiService;
 
-    // _branchModel;
-    _newBranchModel;
+    _newBranchTree;
 
+    _workspaceManager;
     _telegramModel;
-
-    // _mergeRecordModel;
+    
+    _newBranchModel;
     _newMergeRecordModel;
-
-    // _previewRecordModel;
     _newPreviewRecordModel;
 
     constructor() { }
@@ -61,20 +48,15 @@ class AutoMergeController {
         _self.initCmsService();
         _self.initStrapiService();
         //----------------------init models------------------------
-        // await _self.initBranchModel();
         await _self.initNewBranchModel();
 
         await _self.initTelegramModel();
 
-        // _self.initBranchTree();
         _self.initNewBranchTree();
 
         await _self.initWorkspaceManager();
 
-        // _self.initMergeRecordModel();
         _self.initNewMergeRecordModel();
-
-        // _self.initPreviewRecordModel();
         _self.initNewPreviewRecordModel();
     }
 
@@ -94,13 +76,6 @@ class AutoMergeController {
     }
 
     //----------------------init branch model------------------------
-    // async initBranchModel() {
-    //     const _self = this;
-    //     _self._branchModel = new BranchModel();
-    //     let _branchTable = await _self._cmsService.getBranchTable();
-    //     _self._branchModel.setBranchTable(_branchTable);
-    // }
-
     async initNewBranchModel() {
         const _self = this;
         _self._newBranchModel = new NewBranchModel();
@@ -114,16 +89,6 @@ class AutoMergeController {
         const _telegramModel = await _self._cmsService.getTelegramTable();
         _self._telegramModel.setTelegramTable(_telegramModel);
     }
-
-    // initBranchTree() {
-    //     Messenger.openClose('TREE CREATION');
-    //     const _self = this,
-    //         _branchTable = _self._branchModel.getBranchTable(),
-    //         _rootBranch = _self._branchModel.getRootBranch();
-    //     _self._branchTree = new BranchTree(_branchTable, _rootBranch);
-    //     // _self._branchTree._event.on('branchTreeEvent', _self.onBranchTreeEvent, this);
-    //     Messenger.openClose('/TREE CREATION');
-    // }
 
     initNewBranchTree() {
         Messenger.openClose('NEW TREE CREATION');
@@ -148,38 +113,28 @@ class AutoMergeController {
 
     async mergeSuccessHandler($evt) {
         const _self = this;
-        // _self._mergeRecordModel.addMergeSuccessRecordForThisTime($evt);
         _self._newMergeRecordModel.addMergeSuccessRecordForThisTime($evt);
         await _self.sendMergeSuccess($evt);
     }
 
     async mergeFailHandler($evt) {
         const _self = this;
-        // _self._mergeRecordModel.addMergeFailRecordForThisTime($evt);
         _self._newMergeRecordModel.addMergeFailRecordForThisTime($evt);
         await _self.sendMergeFail($evt);
     }
 
     async updatePreviewHandler($evt) {
         const _self = this;
-        // _self._previewRecordModel.addPreviewRecordForThisTime($evt);
         _self._newPreviewRecordModel.addPreviewRecordForThisTime($evt);
-        // await _self.sendUpdatePreviewCommit($evt);
     }
 
     async sendMergeSuccess($evt) {
-        // const _self = this;
-        // await _self._cmsService.sendMergeSuccess($evt);
-
         //strapi API
         const _self = this;
         await _self._strapiService.sendMergeSuccess($evt);
     }
 
     async sendMergeFail($evt) {
-        // const _self = this;
-        // await _self._cmsService.sendMergeFail($evt);
-
         //strapi API
         const _self = this;
         await _self._strapiService.sendMergeFail($evt)
@@ -203,20 +158,10 @@ class AutoMergeController {
         Messenger.openClose('/WORKSPACE INIT PRIMARY WORKSPACE');
     }
 
-    // initMergeRecordModel() {
-    //     const _self = this;
-    //     _self._mergeRecordModel = new MergeRecordModel();
-    // }
-
     initNewMergeRecordModel() {
         const _self = this;
         _self._newMergeRecordModel = new NewMergeRecordModel();
     }
-
-    // initPreviewRecordModel() {
-    //     const _self = this;
-    //     _self._previewRecordModel = new PreviewRecordModel();
-    // }
 
     initNewPreviewRecordModel() {
         const _self = this;
@@ -247,9 +192,6 @@ class AutoMergeController {
 
     async sendMergeStart() {
         const _self = this;
-        // const _rootBranch = _self._branchModel.getRootBranch();
-        // await _self._cmsService.sendMergeStart(_rootBranch);
-
         //strapi API
         const _newRootBranch = _self._newBranchModel.getRootBranch();
         await _self._strapiService.sendMergeStart(_newRootBranch);
@@ -271,7 +213,6 @@ class AutoMergeController {
 
     async handleMergeMessage() {
         const _self = this;
-        // const _allMergeErrors = await _self._cmsService.getAllMergeFailRecords();
         const _mergeFailRecordsForThisTime = _self._newMergeRecordModel.getMergeFailRecordsForThisTime();
         const _frontendGroupTG = _self._telegramModel.getFrontendGroupTG();
         const _hasMergeError = (_mergeFailRecordsForThisTime.length > 0);

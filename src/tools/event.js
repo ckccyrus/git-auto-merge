@@ -48,5 +48,3 @@ class Event{
 }
 
 module.exports = Event;
-
-// _self.instance._event.addEventListener('instanceEvent', _self.func_instanceEvent, _self);
