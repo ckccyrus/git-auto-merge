@@ -1,0 +1,71 @@
+pipeline {
+    options { 
+        disableConcurrentBuilds() // Prevent this jenkins project run in parallel
+        buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '50')) //Remove old builds
+    }
+    agent {
+        label 'agent-internal-build'
+    }
+    tools {
+        nodejs 'nodejs' // NodeJs configured in Jenkins -> Global Tools Configuration -> NodeJS section
+    }
+    environment {
+        STRAPI_HOST = "http://xxx.com/"
+        STRAPI_AUTHORIZATION = "API Access Token"
+    }
+    stages {
+        stage('CheckIfAutoMergePaused'){
+            steps {
+                script {
+                    echo '==========================='
+                    echo 'Start checking if auto merge paused'
+
+                    String url = "$env.STRAPI_HOST/api/live-pause-status"
+
+                    echo '==========================='
+                    echo 'Sending to CMS2.0 ...'
+                    echo "url: $url"
+
+                    env.isAutoMergeLive = false;
+                    def livePausedStatusStr = sh (returnStdout: true, script: "curl ${url}");
+                    def livePausedStatusJson = readJSON text: livePausedStatusStr;
+                    env.isAutoMergeLive = livePausedStatusJson.Status == 'live'
+
+                    echo 'Finish checking if auto merge paused'
+                    echo '==========================='
+                }
+            }
+        }
+        stage('RunAutoMerge'){
+            when {
+                expression {
+                    return env.isAutoMergeLive == 'true';
+                }
+            }
+            steps {
+                script {
+                    echo '==========================='
+                    echo 'Start auto merge'
+                    dir("$env.GAME_GIT_FOLDER_PATH") {
+                        sh 'pwd';
+                        sh 'npm install'
+
+                        String branch_name;
+                        // String FALLBACK_BRANCH_NAME = 'QA/Package'
+                        String FALLBACK_BRANCH_NAME = 'production'
+
+                        if(env.gitlabBranch == null){
+                            env.gitlabBranch = FALLBACK_BRANCH_NAME
+                        }
+
+                        withCredentials([usernamePassword(credentialsId: '	frontend-LDAP', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) { 
+                            sh 'TARGET_GIT_PATH=https://gitlab.com/user/abc.git CMS_HOST=http://xxx.com/ GIT_USERNAME=$USERNAME GIT_PASSWORD=$PASSWORD ROOT_BRANCH=$gitlabBranch node index.js'
+                        }
+                    }
+                    echo 'Finish auto merge'
+                    echo '==========================='
+                }
+            }
+        }
+    }
+}
