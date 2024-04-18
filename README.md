@@ -100,3 +100,9 @@ Run on bash:
 
 ROOT_BRANCH=production CMS_HOST=http://xxx.com TARGET_GIT_PATH=https://gitlab.com/user/abc.git GIT_USERNAME=user GIT_PASSWORD=password node index.js
 ```
+
+---
+
+## Full diagram of auto merge core / UI, frontend tools and CMS
+
+![full_diagram.png](./readmeSrc/full_diagram.png)
