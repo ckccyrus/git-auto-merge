@@ -6,6 +6,8 @@
 
 ### Structure
 
+---
+
 ![automergecore_codestructure.png](./readmeSrc/automergecore_codestructure.png)
 
 **Controller:**
@@ -37,6 +39,8 @@
 - Workspace - an instance for merge process
     - use simpleGit package to run git related command (fetch, pull, merge)
 
+---
+
 ### Installation
 
 Use npm to install packages
@@ -44,6 +48,8 @@ Use npm to install packages
 ```jsx
 npm install
 ```
+
+---
 
 ### Usage
 
